@@ -1,0 +1,134 @@
+# Kodi Media Center language file
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es_ES\n"
+
+msgctxt "#32000"
+msgid "General"
+msgstr "General"
+
+msgctxt "#32001"
+msgid "Playback quality"
+msgstr "Calidad de reproducción"
+
+msgctxt "#32002"
+msgid "Items per page"
+msgstr "Elementos por página"
+
+msgctxt "#32003"
+msgid "API cache (minutes)"
+msgstr "Caché de la API (minutos)"
+
+msgctxt "#32004"
+msgid "Episode order"
+msgstr "Orden de los capítulos"
+
+msgctxt "#32005"
+msgid "Warn when a stream may be geo-restricted"
+msgstr "Avisar si un vídeo puede estar limitado geográficamente"
+
+msgctxt "#32006"
+msgid "Show thematic live channels"
+msgstr "Mostrar los canales temáticos en directo"
+
+msgctxt "#32010"
+msgid "Automatic"
+msgstr "Automática"
+
+msgctxt "#32011"
+msgid "DASH (highest quality)"
+msgstr "DASH (máxima calidad)"
+
+msgctxt "#32012"
+msgid "MP4 (best compatibility)"
+msgstr "MP4 (máxima compatibilidad)"
+
+msgctxt "#32013"
+msgid "Oldest first"
+msgstr "Desde el primer capítulo"
+
+msgctxt "#32014"
+msgid "Newest first"
+msgstr "Desde el último capítulo"
+
+msgctxt "#30100"
+msgid "Live TV"
+msgstr "Directos"
+
+msgctxt "#30101"
+msgid "Most watched"
+msgstr "Lo más visto"
+
+msgctxt "#30102"
+msgid "Latest"
+msgstr "Novedades"
+
+msgctxt "#30103"
+msgid "Categories"
+msgstr "Categorías"
+
+msgctxt "#30104"
+msgid "Full catalog"
+msgstr "Catálogo"
+
+msgctxt "#30105"
+msgid "Search"
+msgstr "Buscar"
+
+msgctxt "#30106"
+msgid "Next page (%s/%s)"
+msgstr "Página siguiente (%s/%s)"
+
+msgctxt "#30109"
+msgid "Season %s"
+msgstr "Temporada %s"
+
+msgctxt "#30110"
+msgid "Episode %s"
+msgstr "Capítulo %s"
+
+msgctxt "#30112"
+msgid "No results."
+msgstr "No hay resultados."
+
+msgctxt "#30113"
+msgid "This video is not available."
+msgstr "Este contenido no está disponible."
+
+msgctxt "#30114"
+msgid "This stream may only play in Catalonia or Spain."
+msgstr "Este contenido puede estar limitado a Cataluña o a España."
+
+msgctxt "#30115"
+msgid "This video is DRM-protected and cannot be played."
+msgstr "Este vídeo está protegido con DRM y no se puede reproducir."
+
+msgctxt "#30116"
+msgid "Could not reach 3Cat. Try again."
+msgstr "No se ha podido conectar con 3Cat. Inténtalo de nuevo."
+
+msgctxt "#30117"
+msgid "inputstream.adaptive is required to play this format."
+msgstr "Hace falta el complemento inputstream.adaptive para reproducir este formato."
+
+msgctxt "#30118"
+msgid "All programmes"
+msgstr "Todos los programas"
+
+msgctxt "#30119"
+msgid "Search programmes"
+msgstr "Buscar programas"
+
+msgctxt "#30120"
+msgid "Search videos"
+msgstr "Buscar vídeos"
+
+msgctxt "#30121"
+msgid "Search text"
+msgstr "Texto a buscar"
+
+msgctxt "#30123"
+msgid "This section is not available."
+msgstr "Esta sección no está disponible."

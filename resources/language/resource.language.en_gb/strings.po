@@ -1,0 +1,134 @@
+# Kodi Media Center language file
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en_GB\n"
+
+msgctxt "#32000"
+msgid "General"
+msgstr "General"
+
+msgctxt "#32001"
+msgid "Playback quality"
+msgstr "Playback quality"
+
+msgctxt "#32002"
+msgid "Items per page"
+msgstr "Items per page"
+
+msgctxt "#32003"
+msgid "API cache (minutes)"
+msgstr "API cache (minutes)"
+
+msgctxt "#32004"
+msgid "Episode order"
+msgstr "Episode order"
+
+msgctxt "#32005"
+msgid "Warn when a stream may be geo-restricted"
+msgstr "Warn when a stream may be geo-restricted"
+
+msgctxt "#32006"
+msgid "Show thematic live channels"
+msgstr "Show thematic live channels"
+
+msgctxt "#32010"
+msgid "Automatic"
+msgstr "Automatic"
+
+msgctxt "#32011"
+msgid "DASH (highest quality)"
+msgstr "DASH (highest quality)"
+
+msgctxt "#32012"
+msgid "MP4 (best compatibility)"
+msgstr "MP4 (best compatibility)"
+
+msgctxt "#32013"
+msgid "Oldest first"
+msgstr "Oldest first"
+
+msgctxt "#32014"
+msgid "Newest first"
+msgstr "Newest first"
+
+msgctxt "#30100"
+msgid "Live TV"
+msgstr "Live TV"
+
+msgctxt "#30101"
+msgid "Most watched"
+msgstr "Most watched"
+
+msgctxt "#30102"
+msgid "Latest"
+msgstr "Latest"
+
+msgctxt "#30103"
+msgid "Categories"
+msgstr "Categories"
+
+msgctxt "#30104"
+msgid "Full catalog"
+msgstr "Full catalog"
+
+msgctxt "#30105"
+msgid "Search"
+msgstr "Search"
+
+msgctxt "#30106"
+msgid "Next page (%s/%s)"
+msgstr "Next page (%s/%s)"
+
+msgctxt "#30109"
+msgid "Season %s"
+msgstr "Season %s"
+
+msgctxt "#30110"
+msgid "Episode %s"
+msgstr "Episode %s"
+
+msgctxt "#30112"
+msgid "No results."
+msgstr "No results."
+
+msgctxt "#30113"
+msgid "This video is not available."
+msgstr "This video is not available."
+
+msgctxt "#30114"
+msgid "This stream may only play in Catalonia or Spain."
+msgstr "This stream may only play in Catalonia or Spain."
+
+msgctxt "#30115"
+msgid "This video is DRM-protected and cannot be played."
+msgstr "This video is DRM-protected and cannot be played."
+
+msgctxt "#30116"
+msgid "Could not reach 3Cat. Try again."
+msgstr "Could not reach 3Cat. Try again."
+
+msgctxt "#30117"
+msgid "inputstream.adaptive is required to play this format."
+msgstr "inputstream.adaptive is required to play this format."
+
+msgctxt "#30118"
+msgid "All programmes"
+msgstr "All programmes"
+
+msgctxt "#30119"
+msgid "Search programmes"
+msgstr "Search programmes"
+
+msgctxt "#30120"
+msgid "Search videos"
+msgstr "Search videos"
+
+msgctxt "#30121"
+msgid "Search text"
+msgstr "Search text"
+
+msgctxt "#30123"
+msgid "This section is not available."
+msgstr "This section is not available."

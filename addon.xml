@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.new3cat" name="3Cat" version="1.0.0" provider-name="new3cat">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0"/>
+    <import addon="inputstream.adaptive" version="20.0.0" optional="true"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="addon.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="ca_ES">Televisió en directe i a la carta de 3Cat</summary>
+    <summary lang="es_ES">Televisión en directo y a la carta de 3Cat</summary>
+    <summary lang="en_GB">3Cat live TV and catch-up</summary>
+    <description lang="ca_ES">Complement no oficial per veure els directes (TV3, 3CatInfo, SX3, 33, Esport3, TV3CAT i canals temàtics) i el catàleg a la carta de 3Cat, l'antiga CCMA. Inclou categories, cerca, novetats i el més vist. Alguns continguts només es poden veure des de Catalunya o Espanya. No esquiva el DRM: si un vídeo està protegit, s'avisa i no es reprodueix.</description>
+    <description lang="es_ES">Complemento no oficial para ver los directos (TV3, 3CatInfo, SX3, 33, Esport3, TV3CAT y canales temáticos) y el catálogo a la carta de 3Cat, la antigua CCMA. Incluye categorías, búsqueda, novedades y lo más visto. Parte del contenido solo se puede ver desde Cataluña o España. No elude el DRM.</description>
+    <description lang="en_GB">Unofficial addon for 3Cat live channels (TV3, 3CatInfo, SX3, 33, Esport3, TV3CAT and thematic channels) and the on-demand catalog. Includes categories, search, latest videos and most-watched rows. Some programmes are only available in Catalonia or Spain. DRM is not bypassed.</description>
+    <disclaimer lang="ca_ES">Aquest complement no està afiliat a la CCMA ni a 3Cat. Els drets dels continguts pertanyen als seus propietaris. La disponibilitat depèn de la geolocalització i de les condicions de 3Cat.</disclaimer>
+    <disclaimer lang="es_ES">Este complemento no está afiliado a la CCMA ni a 3Cat. La disponibilidad depende de la geolocalización y de las condiciones de 3Cat.</disclaimer>
+    <disclaimer lang="en_GB">This addon is not affiliated with CCMA or 3Cat. Availability depends on geolocation and on 3Cat's terms.</disclaimer>
+    <language>ca_ES</language>
+    <platform>all</platform>
+    <license>GPL-2.0-or-later</license>
+    <website>https://www.3cat.cat/</website>
+    <assets>
+      <icon>icon.png</icon>
+      <fanart>fanart.jpg</fanart>
+    </assets>
+  </extension>
+</addon>
