@@ -153,6 +153,26 @@ class ClientTests(unittest.TestCase):
         self.assertFalse(blocked["ok"])
         self.assertEqual(blocked["reason"], "drm")
 
+    def test_age_filter_is_sent_to_the_programme_api(self):
+        seen = {}
+
+        def fetch(url):
+            seen["url"] = url
+            return {
+                "resposta": {
+                    "status": "OK",
+                    "items": {"num": 0, "item": []},
+                    "paginacio": {"total_items": 0, "total_pagines": 0, "pagina_actual": 1},
+                }
+            }
+
+        Client(fetch=fetch, cache=MemoryCache()).programs(
+            page=1, page_size=5, canal="PUC_S3", codi_etic="CE_IN"
+        )
+        self.assertIn("codi_etic=CE_IN", seen["url"])
+        self.assertIn("canal=PUC_S3", seen["url"])
+        self.assertIn("programestv", seen["url"])
+
     def test_refuses_foreign_listing_url(self):
         with self.assertRaises(Exception):
             self.client.listing("https://evil.example/videos", page=1)

@@ -14,6 +14,8 @@ class StringTests(unittest.TestCase):
         self.assertEqual(text(30102, follow_kodi=True, kodi_language="en_GB"), "Latest")
         self.assertEqual(text(30102, follow_kodi=True, kodi_language="ca"), "Novetats")
         self.assertEqual(text(30100, follow_kodi=True, kodi_language="fr"), "Directes")
+        self.assertEqual(text(30130, follow_kodi=False, kodi_language="es"), "Infantil")
+        self.assertEqual(text(30134, follow_kodi=True, kodi_language="es"), "Los más pequeños")
 
     def test_category_titles_ignore_a_foreign_api_name(self):
         self.assertEqual(category_title("pellicules", "Películas"), "Pel·lícules")

@@ -8,11 +8,12 @@ Codi i baixades: <https://github.com/ferranpruneda/plugin.video.new3cat>
 
 ## Què fa
 
-Des del menú de complements de vídeo, 3Cat mostra sis entrades:
+Des del menú de complements de vídeo, 3Cat mostra set entrades:
 
 | Entrada | Què hi trobes |
 | --- | --- |
 | Directes | TV3, 3CatInfo (3/24), SX3, 33, Esport3, TV3CAT i els canals temàtics que publica 3Cat. La sinopsi mostra el programa en antena quan l'API el facilita, amb imatge de paisatge o pòster. |
+| Infantil | Racó dels petits. El SX3 en directe, els programes del canal i franges per edat, amb el logotip i el fanart del SX3. |
 | Novetats | Els vídeos nous del frontal del web. Es poden reproduir directament. |
 | El més vist | Les files de rànquing de vídeo del web (sèries, pel·lícules, documentals, SX3, esports, cuines…). Les files d'àudio i de pòdcast no es mostren. |
 | Categories | Les seccions del web: sèries, pel·lícules, documentals, SX3, actualitat, esports, cultura, música, cuines, campus i entreteniment. Cada secció obre les files editorials (novetats, col·leccions, destacats). |
@@ -22,6 +23,17 @@ Des del menú de complements de vídeo, 3Cat mostra sis entrades:
 Dins d'un programa hi ha les temporades i, a dins, els capítols. Si només hi ha una temporada, s'obre directament la llista de capítols. Les pel·lícules i la resta de vídeos solts es reprodueixen sense passar per temporades.
 
 Les llistes fan servir el tipus de contingut de Kodi (`tvshows`, `seasons`, `episodes`, `movies`) perquè les vistes de pòster, fanart, paisatge i logotip de la pell funcionin. Quan l'API envia les dades, també s'omplen la sinopsi, la durada, la data d'emissió, la temporada, el capítol i la classificació per edats.
+
+## Infantil
+
+La secció **Infantil** és el racó dels petits, separat de la resta del catàleg. Porta el logotip i el fons del SX3, i les llistes de programes s'obren com a sèries perquè la pell pugui mostrar pòsters.
+
+- **SX3 en directe:** el canal infantil.
+- **Programes del SX3:** tot el que l'API marca amb el canal `PUC_S3`.
+- **Per edats:** el codi ètic `CE_IN` (Infantil) i, dins del SX3, `CE_TP` (tots els públics), `CE_07` (a partir de 7 anys) i `CE_10` (a partir de 10 anys).
+- **Destacats del SX3:** les files del web infantil.
+
+3Cat publica l'edat a `codis_etics` (`CE_IN`, `CE_TP`, `CE_07`, `CE_10`, `CE_12`, `CE_13`, `CE_16`, `CE_18`) i, als vídeos, també a `targets` (`PUT_INF`, `PUT_TOTS`, `PUT_ADULT`). Es pot filtrar amb `programestv?codi_etic=CE_IN`. El «+7» de tot el catàleg no és una secció infantil: inclou documentals i programes generals amb edat mínima 7. Per això les franges de 7 i 10 anys només agafen programes del canal SX3.
 
 Els menús, els avisos i la pantalla de configuració surten **en català** encara que Kodi estigui en castellà o en anglès. A **Llengua dels menús** pots triar «La de Kodi» perquè els menús i els avisos segueixin l'idioma de Kodi (català, castellà o anglès; qualsevol altra llengua es queda en català). Els títols i les sinopsis dels programes arriben en català perquè així els publica l'API.
 
@@ -39,9 +51,9 @@ Orígens desconeguts: Kodi només accepta un zip de fora del repositori si els t
 
 ## On baixar el zip
 
-El fitxer es diu `plugin.video.new3cat-1.0.1.zip`. A l'arrel del zip hi ha d'haver la carpeta `plugin.video.new3cat/`. No el tornis a comprimir pel teu compte.
+El fitxer es diu `plugin.video.new3cat-1.0.2.zip`. A l'arrel del zip hi ha d'haver la carpeta `plugin.video.new3cat/`. No el tornis a comprimir pel teu compte.
 
-1. **GitHub Releases (la via recomanada).** Quan es puja una etiqueta `vX.Y.Z` (per exemple `v1.0.1`), la GitHub Action publica una release amb el zip adjunt: <https://github.com/ferranpruneda/plugin.video.new3cat/releases>. Baixa el zip d'aquesta pàgina, no el «Source code» que genera GitHub (aquell no és un complement instal·lable).
+1. **GitHub Releases (la via recomanada).** Quan es puja una etiqueta `vX.Y.Z` (per exemple `v1.0.2`), la GitHub Action publica una release amb el zip adjunt: <https://github.com/ferranpruneda/plugin.video.new3cat/releases>. Baixa el zip d'aquesta pàgina, no el «Source code» que genera GitHub (aquell no és un complement instal·lable).
 2. **Artefacte de la GitHub Action**, útil abans de la primera etiqueta o per provar un commit concret. Obre la pestanya [Actions](https://github.com/ferranpruneda/plugin.video.new3cat/actions), entra a l'execució verda del commit i baixa l'artefacte `plugin.video.new3cat`. GitHub el guarda 90 dies. L'artefacte és un zip que *conté* el zip del complement: obre'l i instal·la el `plugin.video.new3cat-*.zip` de dins.
 3. **Construir-lo tu**, si tens el codi. Mira [Construir el zip i executar les proves](#construir-el-zip-i-executar-les-proves).
 
@@ -50,7 +62,7 @@ El fitxer es diu `plugin.video.new3cat-1.0.1.zip`. A l'arrel del zip hi ha d'hav
 1. Copia el zip al dispositiu on corre Kodi (un USB, la carpeta de baixades o una carpeta compartida).
 2. Activa **Orígens desconeguts**, com s'explica a Requisits, si encara no ho has fet.
 3. Ves a **Configuració → Complements → Instal·la des d'un fitxer zip**.
-4. Localitza `plugin.video.new3cat-1.0.1.zip` i accepta'l.
+4. Localitza `plugin.video.new3cat-1.0.2.zip` i accepta'l.
 5. Quan Kodi digui que s'ha instal·lat, obre **Complements → Complements de vídeo → 3Cat**.
 
 A LibreELEC i a la majoria d'Android el camí dels menús és el mateix. Si el navegador de fitxers no veu el zip, copia'l a l'emmagatzematge que Kodi ja mostra (per exemple `Android/data/org.xbmc.kodi/files/` o una font SMB que hagis afegit).
@@ -165,7 +177,7 @@ bash scripts/build-zip.sh
 
 - `tests.test_parsing`, `tests.test_api` i `tests.test_strings` no necessiten xarxa.
 - `tests.test_live` crida les API públiques de 3Cat. Comprova que les llistes tenen elements i que una adreça HLS o MP4 respon. Un 403 de geoblocatge en TV3, vist des de fora d'Espanya, és el resultat esperat i el test el té en compte.
-- El zip queda a `dist/plugin.video.new3cat-1.0.1.zip`. El número surt de `version` a `addon.xml`. La carpeta `dist/` no es puja al git.
+- El zip queda a `dist/plugin.video.new3cat-1.0.2.zip`. El número surt de `version` a `addon.xml`. La carpeta `dist/` no es puja al git.
 
 La GitHub Action fa el mateix a cada push i a cada pull request: executa les proves unitàries i puja el zip com a artefacte. Les proves en viu es deixen per executar-les en local, perquè depenen de la xarxa i del país del servidor de GitHub.
 
@@ -176,11 +188,11 @@ La GitHub Action fa el mateix a cada push i a cada pull request: executa les pro
 3. Crea l'etiqueta amb el mateix número i una `v` al davant, i puja-la:
 
 ```bash
-git tag v1.0.1
-git push origin v1.0.1
+git tag v1.0.2
+git push origin v1.0.2
 ```
 
-4. La GitHub Action construeix el zip i crea (o actualitza) la [release](https://github.com/ferranpruneda/plugin.video.new3cat/releases) amb el zip adjunt. Fa servir el `GITHUB_TOKEN` del repositori; no cal cap secret addicional. L'etiqueta ha de dir-se `v` seguit de la versió, per exemple `v1.0.1`.
+4. La GitHub Action construeix el zip i crea (o actualitza) la [release](https://github.com/ferranpruneda/plugin.video.new3cat/releases) amb el zip adjunt. Fa servir el `GITHUB_TOKEN` del repositori; no cal cap secret addicional. L'etiqueta ha de dir-se `v` seguit de la versió, per exemple `v1.0.2`.
 
 ## Llicència
 

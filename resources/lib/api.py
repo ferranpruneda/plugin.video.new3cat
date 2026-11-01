@@ -244,7 +244,7 @@ class Client:
         target = ensure_params(with_page(url, page))
         return self._items(target)
 
-    def programs(self, page=1, page_size=24, tematica=None, canal=None, lletra=None):
+    def programs(self, page=1, page_size=24, tematica=None, canal=None, lletra=None, codi_etic=None):
         params = {
             "_format": "json",
             "agrupar": "false",
@@ -261,6 +261,8 @@ class Client:
             params["canal"] = canal
         if lletra:
             params["lletra"] = lletra
+        if codi_etic:
+            params["codi_etic"] = codi_etic
         return self._items("%s/programestv?%s" % (API, urlencode(params)))
 
     def latest(self, page=1, page_size=24):

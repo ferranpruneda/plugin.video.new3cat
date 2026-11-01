@@ -19,6 +19,8 @@ from resources.lib.strings import text as catalog_text
 
 ADDON_ID = "plugin.video.new3cat"
 FANART = "https://img.3cat.cat/multimedia/png/3/0/1697462431903_1920x1080.png"
+KIDS_FANART = "https://apptv.3cat.cat/apptv/_resources/imatges/tematiques/superdestacat/sx3_960x540.jpg"
+KIDS_ICON = "https://statics.3cat.cat/recursos/3play/img/logo-sx3.png"
 
 MIME = {
     "hls": "application/vnd.apple.mpegurl",
@@ -158,6 +160,8 @@ class Router:
         name = self.addon.getAddonInfo("name")
         entries = (
             ("live", 30100, "https://statics.3cat.cat/img/logos/tv3.png"),
+        )
+        rest = (
             ("latest", 30102, "https://statics.3cat.cat/recursos/3play/img/series_960x540.jpg"),
             ("rankings", 30101, "https://apptv.3cat.cat/apptv/_resources/imatges/tematiques/superdestacat/pelicules_960x540.jpg"),
             ("categories", 30103, "https://apptv.3cat.cat/apptv/_resources/imatges/tematiques/superdestacat/documentals_960x540.jpg"),
@@ -167,7 +171,73 @@ class Router:
         for action, label, image in entries:
             art = {"thumb": image, "poster": image, "fanart": image, "icon": image}
             self.add(self.url(action=action), self.tr(label), art=art, info={"mediatype": "video", "plot": self.tr(label)})
+        self.add(
+            self.url(action="kids"),
+            self.tr(30130),
+            art=_kids_art(),
+            info={"mediatype": "tvshow", "plot": self.tr(30139)},
+        )
+        for action, label, image in rest:
+            art = {"thumb": image, "poster": image, "fanart": image, "icon": image}
+            self.add(self.url(action=action), self.tr(label), art=art, info={"mediatype": "video", "plot": self.tr(label)})
         self.finish("videos", name, cache=False)
+
+    def action_kids(self):
+        art = _kids_art()
+        self.add(
+            self.url(action="play", channel_id="sx3", title=self.tr(30131)),
+            self.tr(30131),
+            art=art,
+            info={"mediatype": "video", "plot": self.tr(30140), "genre": [self.tr(30124)]},
+            folder=False,
+            playable=True,
+        )
+        self._add_kids_folder(self.tr(30132), self.tr(30141), canal="PUC_S3")
+        self.add(
+            self.url(action="kids_ages"),
+            self.tr(30133),
+            art=art,
+            info={"mediatype": "tvshow", "plot": self.tr(30142)},
+        )
+        self.add(
+            self.url(action="kids_shelves"),
+            self.tr(30138),
+            art=art,
+            info={"mediatype": "tvshow", "plot": self.tr(30147)},
+        )
+        self.finish("tvshows", self.tr(30130), fanart=KIDS_FANART)
+
+    def action_kids_ages(self):
+        art = _kids_art()
+        bands = (
+            (30134, 30143, "", "CE_IN"),
+            (30135, 30144, "PUC_S3", "CE_TP"),
+            (30136, 30145, "PUC_S3", "CE_07"),
+            (30137, 30146, "PUC_S3", "CE_10"),
+        )
+        for title_id, plot_id, canal, code in bands:
+            self._add_kids_folder(self.tr(title_id), self.tr(plot_id), canal=canal, codi_etic=code, art=art)
+        self.finish("tvshows", self.tr(30133), fanart=KIDS_FANART)
+
+    def action_kids_shelves(self):
+        rows = self.client.section_rows("sx3")
+        if not rows:
+            self.notify(self.tr(30112))
+        self._add_shelves(rows, self.tr(30138), fanart=KIDS_FANART)
+
+    def _add_kids_folder(self, title, plot, canal="", codi_etic="", art=None):
+        self.add(
+            self.url(
+                action="programs",
+                title=title,
+                canal=canal,
+                codi_etic=codi_etic,
+                kids="1",
+            ),
+            title,
+            art=art or _kids_art(),
+            info={"mediatype": "tvshow", "plot": plot},
+        )
 
     def action_live(self):
         include_fast = _bool_setting(self.addon, "fast_channels", True)
@@ -250,6 +320,7 @@ class Router:
             tematica=self.params.get("tematica"),
             lletra=self.params.get("lletra"),
             canal=self.params.get("canal"),
+            codi_etic=self.params.get("codi_etic"),
         )
         self._add_catalog(items, "tvshows")
         extra = {
@@ -258,11 +329,14 @@ class Router:
             "tematica": self.params.get("tematica"),
             "lletra": self.params.get("lletra"),
             "canal": self.params.get("canal"),
+            "codi_etic": self.params.get("codi_etic"),
+            "kids": self.params.get("kids"),
         }
         self._add_next(pagination, **extra)
         if not self._items:
             self.notify(self.tr(30112))
-        self.finish("tvshows", title)
+        fanart = KIDS_FANART if self.params.get("kids") == "1" else None
+        self.finish("tvshows", title, fanart=fanart)
 
     def action_shelf(self):
         page = _page(self.params)
@@ -561,6 +635,16 @@ class Router:
         if all(item["kind"] == "video" and item["episode"] for item in shown):
             return "episodes"
         return "videos"
+
+
+def _kids_art():
+    return {
+        "thumb": KIDS_ICON,
+        "poster": KIDS_ICON,
+        "icon": KIDS_ICON,
+        "fanart": KIDS_FANART,
+        "landscape": KIDS_FANART,
+    }
 
 
 def _page(params):
