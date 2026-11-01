@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Proves unitàries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Proves unitàries
+        run: python -m unittest tests.test_parsing tests.test_api -v
+
+  package:
+    name: Zip instal·lable
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construeix el zip
+        run: bash scripts/build-zip.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plugin.video.new3cat
+          path: dist/*.zip
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publica la GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          shopt -s nullglob
+          zips=(dist/*.zip)
+          if [ "${#zips[@]}" -ne 1 ]; then
+            echo "Expected exactly one zip in dist/, found ${#zips[@]}" >&2
+            exit 1
+          fi
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "${zips[0]}" --clobber
+          else
+            gh release create "$tag" "${zips[0]}" \
+              --title "$tag" \
+              --generate-notes
+          fi
