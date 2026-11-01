@@ -1,0 +1,14 @@
+# Canvis
+
+El format segueix [Keep a Changelog](https://keepachangelog.com/). Les versions del complement són les de `addon.xml`. Una etiqueta `vX.Y.Z` al repositori publica el zip d'aquella versió a GitHub Releases.
+
+## [1.0.0] - 2026-10-31
+
+Primera versió instal·lable.
+
+- Directes de TV3, 3CatInfo (3/24), SX3, 33, Esport3, TV3CAT i canals temàtics, amb el programa en antena quan l'API l'indica.
+- Catàleg a la carta per categories del web, temporades i capítols, amb pòsters, fanart, sinopsi, durada i data.
+- Novetats, el més vist, cerca de programes i de vídeos, i índex A-Z.
+- Reproducció HLS, DASH o MP4 en clar. Avís si el flux pot estar limitat a Catalunya o Espanya. Els vídeos amb DRM no es reprodueixen.
+- Interfície en català, castellà i anglès.
+- Memòria cau de les crides a l'API i script per generar el zip.

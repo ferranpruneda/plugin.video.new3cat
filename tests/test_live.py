@@ -93,15 +93,27 @@ class LiveApiTests(unittest.TestCase):
         tv3 = self.client.resolve(channel_id="tv3", mode="auto")
         self.assertTrue(info["ok"])
         self.assertEqual(info["stream"]["protocol"], "hls")
+        self.assertEqual(info["stream"]["geo"], "TOTS")
+        self.assertFalse(info["stream"]["limited"])
         self.assertTrue(tv3["ok"])
         self.assertEqual(tv3["stream"]["protocol"], "hls")
-        if geo == "TOTS":
-            self.assertFalse(info["stream"]["limited"])
+        # limited is true only when the chosen variant is narrower than the
+        # viewer. A worldwide (TOTS) address is not limited.
+        chosen_geo = tv3["stream"]["geo"]
+        if chosen_geo in (geo, "TOTS"):
+            self.assertFalse(tv3["stream"]["limited"])
+        else:
             self.assertTrue(tv3["stream"]["limited"])
         status, content_type, body = _fetch_bytes(info["stream"]["url"])
         self.assertEqual(status, 200)
         self.assertIn(b"#EXTM3U", body)
         self.assertIn("mpegurl", content_type)
+        tv3_status, _tv3_type, tv3_body = _fetch_bytes(tv3["stream"]["url"])
+        if tv3["stream"]["limited"]:
+            self.assertIn(tv3_status, (200, 403))
+        else:
+            self.assertEqual(tv3_status, 200)
+            self.assertIn(b"#EXTM3U", tv3_body)
 
 
 if __name__ == "__main__":
