@@ -19,6 +19,7 @@ from resources.lib.history import HistoryStore, format_position, should_resume
 from resources.lib.matching import rank_matches, search_variants
 from resources.lib.parsing import present_item
 from resources.lib.strings import text as catalog_text
+from resources.lib.views import estuary_view_id, fill_art
 
 ADDON_ID = "plugin.video.new3cat"
 FANART = "https://img.3cat.cat/multimedia/png/3/0/1697462431903_1920x1080.png"
@@ -41,6 +42,10 @@ def log(message, level=xbmc.LOGINFO):
 def build_url(base, params):
     cleaned = {key: value for key, value in params.items() if value is not None and value != ""}
     return "%s?%s" % (base, urlencode(cleaned))
+
+
+def _view_type(addon):
+    return {"0": "wall", "1": "poster", "2": "infowall"}.get(addon.getSetting("view_type") or "0", "wall")
 
 
 def _bool_setting(addon, key, default):
@@ -130,10 +135,7 @@ class Router:
 
     def add(self, url, title, art=None, info=None, folder=True, playable=False, label2=""):
         item = xbmcgui.ListItem(label=title or "3Cat", label2=label2 or "")
-        merged = {"fanart": FANART}
-        if art:
-            merged.update({key: value for key, value in art.items() if value})
-        item.setArt(merged)
+        item.setArt(fill_art(art, FANART))
         if info:
             _apply_info(item, info)
         if playable:
@@ -161,6 +163,22 @@ class Router:
         xbmcplugin.addDirectoryItems(self.handle, self._items)
         xbmcplugin.endOfDirectory(self.handle, succeeded=True, cacheToDisc=cache)
         self._items = []
+        self._apply_default_view(content or "")
+
+    def _apply_default_view(self, content):
+        view_id = estuary_view_id(
+            xbmc.getSkinDir(),
+            _bool_setting(self.addon, "force_view", True),
+            _view_type(self.addon),
+            content,
+        )
+        if not view_id:
+            return
+        # The skin restores the last view after the directory is built, so the
+        # builtin has to run once that has happened and the script must still
+        # be alive for it.
+        xbmc.executebuiltin("Container.SetViewMode(%d)" % view_id)
+        xbmc.sleep(200)
 
     def action_root(self):
         name = self.addon.getAddonInfo("name")

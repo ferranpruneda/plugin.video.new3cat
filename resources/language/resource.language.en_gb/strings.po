@@ -160,3 +160,23 @@ msgstr "Desa el que miro en aquest dispositiu"
 msgctxt "#32021"
 msgid "Clear watch history on this device"
 msgstr "Esborra l'historial d'aquest dispositiu"
+
+msgctxt "#32022"
+msgid "Use a poster or wall view"
+msgstr "Mostra un mur o pòsters"
+
+msgctxt "#32023"
+msgid "View type"
+msgstr "Tipus de vista"
+
+msgctxt "#32024"
+msgid "Wall"
+msgstr "Mur"
+
+msgctxt "#32025"
+msgid "Poster"
+msgstr "Pòster"
+
+msgctxt "#32026"
+msgid "Info wall"
+msgstr "Mur amb informació"

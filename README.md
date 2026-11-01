@@ -26,6 +26,12 @@ Dins d'un programa hi ha les temporades i, a dins, els capítols. Si només hi h
 
 Les llistes fan servir el tipus de contingut de Kodi (`tvshows`, `seasons`, `episodes`, `movies`) perquè les vistes de pòster, fanart, paisatge i logotip de la pell funcionin. Quan l'API envia les dades, també s'omplen la sinopsi, la durada, la data d'emissió, la temporada, el capítol i la classificació per edats.
 
+## Vista per defecte
+
+A Kodi 20 i 21, la pell Estuary numera les vistes de vídeo així: llista 50, pòster 51, mur d'icones 52, shift 53, mur amb informació 54, llista ampla 55, mur 500, bàner 501 i fanart 502. El mur (500) serveix per a directes, sèries, capítols, cerca i Continua mirant. El pòster (51) només el mostra Estuary en sèries, pel·lícules i temporades; en la resta de llistes el complement fa servir el mur.
+
+Amb **Mostra un mur o pòsters** activat (és el valor per defecte), després de construir la llista es crida `Container.SetViewMode`. Si la pell no és Estuary, no es força cap vista: cada pell té números diferents. Cada element rep pòster, miniatura i icona, encara que l'API només hagi enviat una imatge, perquè el mur no quedi buit.
+
 ## Cerca per veu
 
 Kodi no ofereix un micròfon als complements en Python. **Cerca per veu** obre el quadre de text de Kodi. Si el teclat o el comandament poden dictar, el text parlat entra en aquest quadre i el complement el busca.
@@ -111,6 +117,8 @@ No cal esborrar la carpeta de dades per una actualització normal.
 | Mostra els canals temàtics en directe | Activat | Afegeix a Directes els canals ràpids (anime, cinema, etc.) que 3Cat publica a part dels sis canals principals. |
 | Desa el que miro en aquest dispositiu | Activat | Guarda en local el punt on has deixat cada vídeo. No s'envia enlloc. |
 | Esborra l'historial d'aquest dispositiu | — | Esborra aquesta llista. No es pot desfer. |
+| Mostra un mur o pòsters | Activat | A la pell Estuary (la de Kodi 20 i 21) obre les llistes en mur o pòster en comptes de la llista plana. En altres pells no es força cap número de vista. |
+| Tipus de vista | Mur | Mur (vista 500), Pòster (vista 51, només sèries, pel·lícules i temporades; la resta passa al mur) o Mur amb informació (vista 54). |
 
 ## Geolocalització i DRM
 
@@ -197,12 +205,12 @@ tests/                    proves unitàries i proves contra l'API pública
 Cal Python 3.9 o superior (el de Kodi 20/21 en té prou; per les proves, 3.11 va bé), `bash`, `tar` i `zip`. No cal instal·lar Kodi.
 
 ```bash
-python3 -m unittest tests.test_parsing tests.test_api tests.test_strings tests.test_matching tests.test_history -v
+python3 -m unittest tests.test_parsing tests.test_api tests.test_strings tests.test_matching tests.test_history tests.test_views -v
 python3 -m unittest tests.test_live -v
 bash scripts/build-zip.sh
 ```
 
-- `tests.test_parsing`, `tests.test_api`, `tests.test_strings`, `tests.test_matching` i `tests.test_history` no necessiten xarxa.
+- `tests.test_parsing`, `tests.test_api`, `tests.test_strings`, `tests.test_matching`, `tests.test_history` i `tests.test_views` no necessiten xarxa.
 - `tests.test_live` crida les API públiques de 3Cat. Comprova que les llistes tenen elements i que una adreça HLS o MP4 respon. Un 403 de geoblocatge en TV3, vist des de fora d'Espanya, és el resultat esperat i el test el té en compte.
 - El zip queda a `dist/plugin.video.new3cat-1.0.2.zip`. El número surt de `version` a `addon.xml`. La carpeta `dist/` no es puja al git.
 

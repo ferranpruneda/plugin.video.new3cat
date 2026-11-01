@@ -9,6 +9,7 @@ El format segueix [Keep a Changelog](https://keepachangelog.com/). Les versions 
 - No s'hi barregen tots els programes «+7» del catàleg general: aquest codi és una edat mínima, no una marca infantil. Les franges de 7 i 10 anys es limiten al canal SX3.
 - **Cerca per veu:** obre el teclat de Kodi perquè el micròfon del sistema o del comandament hi pugui dictar. No hi ha API de micròfon per als complements. La cerca tolera accents i errors petits.
 - **Continua mirant:** historial i punt de represa només en aquest dispositiu, amb programes semblants segons la temàtica. Es pot desactivar i esborrar.
+- Les llistes s'obren en mur (vista 500 d'Estuary) per defecte. Es pot triar pòster o mur amb informació, o desactivar-ho. En altres pells no es força la vista.
 
 ## [1.0.1] - 2026-11-01
 
