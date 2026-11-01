@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
   <category label="32000">
+    <setting id="ui_language" type="enum" label="32007" lvalues="32015|32016" default="0"/>
+    <setting id="force_view" type="bool" label="32022" default="true"/>
+    <setting id="view_type" type="enum" label="32023" lvalues="32024|32025|32026" default="0"/>
     <setting id="stream_mode" type="enum" label="32001" lvalues="32010|32011|32012" default="0"/>
     <setting id="page_size" type="slider" label="32002" default="24" range="8,1,60" option="int"/>
     <setting id="cache_minutes" type="slider" label="32003" default="30" range="1,1,240" option="int"/>
     <setting id="episode_order" type="enum" label="32004" lvalues="32013|32014" default="0"/>
     <setting id="geo_warning" type="bool" label="32005" default="true"/>
     <setting id="fast_channels" type="bool" label="32006" default="true"/>
+    <setting id="remember_history" type="bool" label="32020" default="true"/>
+    <setting id="clear_history" type="action" label="32021" action="RunPlugin(plugin://plugin.video.new3cat/?action=clear_history)"/>
   </category>
 </settings>

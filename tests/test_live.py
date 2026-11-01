@@ -43,6 +43,19 @@ class LiveApiTests(unittest.TestCase):
         self.assertGreater(search_page.get("total_items", 0), 0)
         self.assertTrue(found)
 
+    def test_infantil_age_codes(self):
+        items, page = self.client.programs(page=1, page_size=3, codi_etic="CE_IN")
+        self.assertGreater(page.get("total_items", 0), 0)
+        self.assertTrue(items)
+        for item in items:
+            codes = [entry.get("id") for entry in item.get("codis_etics") or []]
+            self.assertIn("CE_IN", codes)
+        older, older_page = self.client.programs(
+            page=1, page_size=2, canal="PUC_S3", codi_etic="CE_07"
+        )
+        self.assertGreater(older_page.get("total_items", 0), 0)
+        self.assertTrue(older)
+
     def test_latest_and_rankings(self):
         videos, page = self.client.latest(page=1, page_size=4)
         self.assertGreater(page.get("total_items", 0), 0)

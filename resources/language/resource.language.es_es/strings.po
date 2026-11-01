@@ -11,75 +11,87 @@ msgstr "General"
 
 msgctxt "#32001"
 msgid "Playback quality"
-msgstr "Calidad de reproducción"
+msgstr "Qualitat de reproducció"
 
 msgctxt "#32002"
 msgid "Items per page"
-msgstr "Elementos por página"
+msgstr "Elements per pàgina"
 
 msgctxt "#32003"
 msgid "API cache (minutes)"
-msgstr "Caché de la API (minutos)"
+msgstr "Memòria cau de l'API (minuts)"
 
 msgctxt "#32004"
 msgid "Episode order"
-msgstr "Orden de los capítulos"
+msgstr "Ordre dels capítols"
 
 msgctxt "#32005"
 msgid "Warn when a stream may be geo-restricted"
-msgstr "Avisar si un vídeo puede estar limitado geográficamente"
+msgstr "Avisa si un vídeo pot estar limitat geogràficament"
 
 msgctxt "#32006"
 msgid "Show thematic live channels"
-msgstr "Mostrar los canales temáticos en directo"
+msgstr "Mostra els canals temàtics en directe"
+
+msgctxt "#32007"
+msgid "Menu language"
+msgstr "Llengua dels menús"
+
+msgctxt "#32015"
+msgid "Catalan"
+msgstr "Català"
+
+msgctxt "#32016"
+msgid "Kodi language"
+msgstr "La de Kodi"
 
 msgctxt "#32010"
 msgid "Automatic"
-msgstr "Automática"
+msgstr "Automàtica"
 
 msgctxt "#32011"
 msgid "DASH (highest quality)"
-msgstr "DASH (máxima calidad)"
+msgstr "DASH (màxima qualitat)"
 
 msgctxt "#32012"
 msgid "MP4 (best compatibility)"
-msgstr "MP4 (máxima compatibilidad)"
+msgstr "MP4 (màxima compatibilitat)"
 
 msgctxt "#32013"
 msgid "Oldest first"
-msgstr "Desde el primer capítulo"
+msgstr "Del primer capítol"
 
 msgctxt "#32014"
 msgid "Newest first"
-msgstr "Desde el último capítulo"
+msgstr "Del darrer capítol"
 
 msgctxt "#30100"
 msgid "Live TV"
-msgstr "Directos"
+msgstr "Directes"
 
 msgctxt "#30101"
 msgid "Most watched"
-msgstr "Lo más visto"
+msgstr "El més vist"
 
 msgctxt "#30102"
 msgid "Latest"
-msgstr "Novedades"
+msgstr "Novetats"
 
 msgctxt "#30103"
 msgid "Categories"
-msgstr "Categorías"
+msgstr "Categories"
 
 msgctxt "#30104"
 msgid "Full catalog"
-msgstr "Catálogo"
+msgstr "Catàleg"
 
 msgctxt "#30105"
 msgid "Search"
-msgstr "Buscar"
+msgstr "Cerca"
 
 msgctxt "#30106"
 msgid "Next page (%s/%s)"
-msgstr "Página siguiente (%s/%s)"
+msgstr "Pàgina següent (%s/%s)"
 
 msgctxt "#30109"
 msgid "Season %s"
@@ -87,48 +99,84 @@ msgstr "Temporada %s"
 
 msgctxt "#30110"
 msgid "Episode %s"
-msgstr "Capítulo %s"
+msgstr "Capítol %s"
 
 msgctxt "#30112"
 msgid "No results."
-msgstr "No hay resultados."
+msgstr "No hi ha resultats."
 
 msgctxt "#30113"
 msgid "This video is not available."
-msgstr "Este contenido no está disponible."
+msgstr "Aquest contingut no està disponible."
 
 msgctxt "#30114"
 msgid "This stream may only play in Catalonia or Spain."
-msgstr "Este contenido puede estar limitado a Cataluña o a España."
+msgstr "Aquest contingut pot estar limitat a Catalunya o a Espanya."
 
 msgctxt "#30115"
 msgid "This video is DRM-protected and cannot be played."
-msgstr "Este vídeo está protegido con DRM y no se puede reproducir."
+msgstr "Aquest vídeo està protegit amb DRM i no es pot reproduir."
 
 msgctxt "#30116"
 msgid "Could not reach 3Cat. Try again."
-msgstr "No se ha podido conectar con 3Cat. Inténtalo de nuevo."
+msgstr "No s'ha pogut connectar amb 3Cat. Torna-ho a provar."
 
 msgctxt "#30117"
 msgid "inputstream.adaptive is required to play this format."
-msgstr "Hace falta el complemento inputstream.adaptive para reproducir este formato."
+msgstr "Cal el complement inputstream.adaptive per reproduir aquest format."
 
 msgctxt "#30118"
 msgid "All programmes"
-msgstr "Todos los programas"
+msgstr "Tots els programes"
 
 msgctxt "#30119"
 msgid "Search programmes"
-msgstr "Buscar programas"
+msgstr "Cerca de programes"
 
 msgctxt "#30120"
 msgid "Search videos"
-msgstr "Buscar vídeos"
+msgstr "Cerca de vídeos"
 
 msgctxt "#30121"
 msgid "Search text"
-msgstr "Texto a buscar"
+msgstr "Text a cercar"
 
 msgctxt "#30123"
 msgid "This section is not available."
-msgstr "Esta sección no está disponible."
+msgstr "Aquesta secció no està disponible."
+
+msgctxt "#30124"
+msgid "Live"
+msgstr "Directe"
+
+msgctxt "#30125"
+msgid "Season"
+msgstr "Temporada"
+
+msgctxt "#32020"
+msgid "Save what I watch on this device"
+msgstr "Desa el que miro en aquest dispositiu"
+
+msgctxt "#32021"
+msgid "Clear watch history on this device"
+msgstr "Esborra l'historial d'aquest dispositiu"
+
+msgctxt "#32022"
+msgid "Use a poster or wall view"
+msgstr "Mostra un mur o pòsters"
+
+msgctxt "#32023"
+msgid "View type"
+msgstr "Tipus de vista"
+
+msgctxt "#32024"
+msgid "Wall"
+msgstr "Mur"
+
+msgctxt "#32025"
+msgid "Poster"
+msgstr "Pòster"
+
+msgctxt "#32026"
+msgid "Info wall"
+msgstr "Mur amb informació"
