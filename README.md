@@ -28,9 +28,19 @@ Les llistes fan servir el tipus de contingut de Kodi (`tvshows`, `seasons`, `epi
 
 ## Vista per defecte
 
-A Kodi 20 i 21, la pell Estuary numera les vistes de vídeo així: llista 50, pòster 51, mur d'icones 52, shift 53, mur amb informació 54, llista ampla 55, mur 500, bàner 501 i fanart 502. El mur (500) serveix per a directes, sèries, capítols, cerca i Continua mirant. El pòster (51) només el mostra Estuary en sèries, pel·lícules i temporades; en la resta de llistes el complement fa servir el mur.
+A Kodi 20 (Nexus) i Kodi 21 (Omega), `addons/skin.estuary/xml/MyVideoNav.xml` declara les mateixes vistes: `50,51,52,53,54,55,500,501,502`. El mur amb informació és el control 54 (`View_54_InfoWall.xml`) i la llista ampla és el control 55 (`View_55_WideList.xml`). El mur és el 500 i el pòster el 51. El pòster només el mostra Estuary en sèries, pel·lícules i temporades; si es tria en una altra llista, el complement passa al mur.
 
-Amb **Mostra un mur o pòsters** activat (és el valor per defecte), després de construir la llista es crida `Container.SetViewMode`. Si la pell no és Estuary, no es força cap vista: cada pell té números diferents. Cada element rep pòster, miniatura i icona, encara que l'API només hagi enviat una imatge, perquè el mur no quedi buit.
+Cada tipus de pàgina té la seva vista. Amb **Força la vista d'Estuary** activat (és el valor per defecte), després de construir la llista es crida `Container.SetViewMode` amb el número d'aquell tipus, també en tornar enrere. Les llistes no es guarden a la cau de directoris de Kodi: si es guardessin, enrere no tornaria a executar el complement i la pell es quedaria la vista de la pantalla anterior. Els menús i els programes són tots dos `tvshows`, així que Estuary no els pot recordar per separat. Si es desactiva l'opció, una vista canviada des del menú lateral es desa per a aquell tipus de pantalla (menús, vídeos o programes) i es torna a aplicar; el valor per defecte no la tapa. Si la pell no és Estuary, no es força cap vista. Cada element rep pòster, miniatura i icona, encara que l'API només hagi enviat una imatge.
+
+| Pàgina | Vista per defecte |
+| --- | --- |
+| Menú principal, Infantil, Per edats, categories, lletres A-Z, l'índex d'El més vist i qualsevol pàgina de carpetes (les files d'una secció o del SX3) | Mur amb informació (54). El contingut de la llista és `tvshows`, perquè així Estuary dibuixa el pòster a 290×415 i un pòster 2:3 no queda dins la fitxa apaïsada de 316×218 que fa servir amb `videos`. Cada entrada té títol i descripció. |
+| Directes, capítols, clips, novetats, cerca de vídeos, cerca per veu quan hi ha vídeos, Continua mirant | Llista ampla (55). |
+| Programes (sèries), temporades, cerca de programes, Et pot agradar, i una fila que només conté programes | Mur (500). Es pot canviar a pòster. |
+
+Les temporades es queden amb la vista de programes: no són un menú de seccions ni una llista de fitxers reproduïbles. Una cerca per veu que només troba programes fa servir la vista de programes; si barreja programes i vídeos, fa servir la llista ampla.
+
+Als menús, si 3Cat ja envia una entradeta (com a les categories del web), es mostra aquella. Si no n'hi ha, o només repeteix el títol, el complement escriu una frase curta en català. Amb «La de Kodi» aquesta frase surt en castellà o en anglès. Cap entrada d'aquests menús queda sense sinopsi.
 
 ## Cerca per veu
 
@@ -53,7 +63,15 @@ Quan mires un vídeo, el complement apunta en aquest aparell el títol, el progr
 
 ## Infantil
 
-La secció **Infantil** és el racó dels petits, separat de la resta del catàleg. Les carpetes tenen dibuixos originals (sol, arc de Sant Martí, globus, estels i números), un fons de cel i muntanyes, i un bàner. Cada element porta icona, miniatura, pòster, fanart, paisatge i bàner, i les llistes s'obren com a sèries perquè la pell pugui mostrar pòsters. El logotip oficial del SX3 només es fa servir com a marca petita (`clearlogo`), tal com el publica 3Cat. Els programes de dins conserven el seu pòster.
+La secció **Infantil** és el racó dels petits, separat de la resta del catàleg. Les carpetes tenen dibuixos aprovats (icona, pòster 2:3, fons i bàner). El menú d'Infantil, el de Per edats i els destacats s'obren en mur amb informació; els programes de dins segueixen la vista de programes i conserven el pòster de 3Cat. El logotip oficial del SX3 només es fa servir com a marca petita (`clearlogo`).
+
+## Imatges
+
+Els menús, les categories, les lletres i la cerca fan servir pòsters 2:3 propis (`resources/media/`). No hi ha versions apaïsades ni icones separades per a aquestes seccions: la fitxa és el pòster i el fons de la secció és el fanart. La categoria SX3 reutilitza el pòster d'Infantil. Una categoria desconeguda fa servir el pòster genèric.
+
+Els programes, els capítols, les novetats i els resultats de cerca continuen amb les caràtules de 3Cat. Si un element no en porta cap, el complement hi posa `resources/media/common/poster-fallback.png` i, de fons, `fanart.jpg`.
+
+A **Directes**, TV3, 3CatInfo, SX3, 33, Esport3 i TV3CAT mostren la imatge del programa en antena i conserven el logotip oficial. Els canals temàtics tenen un pòster propi (Verdi Clàssics, Anime, Joc de cartes, Doraemon, Plats bruts, Vinagre(ta) i les càmeres del temps). Un canal temàtic nou fa servir el pòster genèric. Les lletres del catàleg, de la «#» a la Z, tenen cadascuna el seu pòster. L'especificació completa és a `docs/specs.md`.
 
 - **SX3 en directe:** el canal infantil.
 - **Programes del SX3:** tot el que l'API marca amb el canal `PUC_S3`.
@@ -78,9 +96,9 @@ Orígens desconeguts: Kodi només accepta un zip de fora del repositori si els t
 
 ## On baixar el zip
 
-El fitxer es diu `plugin.video.new3cat-1.0.2.zip`. A l'arrel del zip hi ha d'haver la carpeta `plugin.video.new3cat/`. No el tornis a comprimir pel teu compte.
+El fitxer es diu `plugin.video.new3cat-1.0.3.zip`. A l'arrel del zip hi ha d'haver la carpeta `plugin.video.new3cat/`. No el tornis a comprimir pel teu compte.
 
-1. **GitHub Releases (la via recomanada).** Quan es puja una etiqueta `vX.Y.Z` (per exemple `v1.0.2`), la GitHub Action publica una release amb el zip adjunt: <https://github.com/ferranpruneda/plugin.video.new3cat/releases>. Baixa el zip d'aquesta pàgina, no el «Source code» que genera GitHub (aquell no és un complement instal·lable).
+1. **GitHub Releases (la via recomanada).** Quan es puja una etiqueta `vX.Y.Z` (per exemple `v1.0.3`), la GitHub Action publica una release amb el zip adjunt: <https://github.com/ferranpruneda/plugin.video.new3cat/releases>. Baixa el zip d'aquesta pàgina, no el «Source code» que genera GitHub (aquell no és un complement instal·lable).
 2. **Artefacte de la GitHub Action**, útil abans de la primera etiqueta o per provar un commit concret. Obre la pestanya [Actions](https://github.com/ferranpruneda/plugin.video.new3cat/actions), entra a l'execució verda del commit i baixa l'artefacte `plugin.video.new3cat`. GitHub el guarda 90 dies. L'artefacte és un zip que *conté* el zip del complement: obre'l i instal·la el `plugin.video.new3cat-*.zip` de dins.
 3. **Construir-lo tu**, si tens el codi. Mira [Construir el zip i executar les proves](#construir-el-zip-i-executar-les-proves).
 
@@ -89,7 +107,7 @@ El fitxer es diu `plugin.video.new3cat-1.0.2.zip`. A l'arrel del zip hi ha d'hav
 1. Copia el zip al dispositiu on corre Kodi (un USB, la carpeta de baixades o una carpeta compartida).
 2. Activa **Orígens desconeguts**, com s'explica a Requisits, si encara no ho has fet.
 3. Ves a **Configuració → Complements → Instal·la des d'un fitxer zip**.
-4. Localitza `plugin.video.new3cat-1.0.2.zip` i accepta'l.
+4. Localitza `plugin.video.new3cat-1.0.3.zip` i accepta'l.
 5. Quan Kodi digui que s'ha instal·lat, obre **Complements → Complements de vídeo → 3Cat**.
 
 A LibreELEC i a la majoria d'Android el camí dels menús és el mateix. Si el navegador de fitxers no veu el zip, copia'l a l'emmagatzematge que Kodi ja mostra (per exemple `Android/data/org.xbmc.kodi/files/` o una font SMB que hagis afegit).
@@ -117,8 +135,10 @@ No cal esborrar la carpeta de dades per una actualització normal.
 | Mostra els canals temàtics en directe | Activat | Afegeix a Directes els canals ràpids (anime, cinema, etc.) que 3Cat publica a part dels sis canals principals. |
 | Desa el que miro en aquest dispositiu | Activat | Guarda en local el punt on has deixat cada vídeo. No s'envia enlloc. |
 | Esborra l'historial d'aquest dispositiu | — | Esborra aquesta llista. No es pot desfer. |
-| Mostra un mur o pòsters | Activat | A la pell Estuary (la de Kodi 20 i 21) obre les llistes en mur o pòster en comptes de la llista plana. En altres pells no es força cap número de vista. |
-| Tipus de vista | Mur | Mur (vista 500), Pòster (vista 51, només sèries, pel·lícules i temporades; la resta passa al mur) o Mur amb informació (vista 54). |
+| Força la vista d'Estuary | Activat | A la pell Estuary (Kodi 20 i 21) aplica la vista de cada tipus de pàgina. En altres pells no es força cap número. |
+| Menús i categories | Mur amb informació | Vista 54. També es pot triar mur (500), pòster (51, només on Estuary el permet) o llista ampla (55). |
+| Vídeos i directes | Llista ampla | Vista 55, per a directes, capítols, clips, novetats i Continua mirant. El pòster, en aquestes llistes, passa al mur. |
+| Programes | Mur | Vista 500, per a sèries, temporades, cerca de programes i Et pot agradar. El pòster (51) aquí sí que el mostra Estuary. |
 
 ## Geolocalització i DRM
 
@@ -181,7 +201,8 @@ addon.xml                 manifest de Kodi (versió, resum, llicència, codi fon
 addon.py                  punt d'entrada
 service.py                segueix el reproductor i desa el minut en local
 icon.png / fanart.jpg     imatges del complement
-resources/media/kids/     dibuixos originals de la secció Infantil
+resources/media/         pòsters i fons (menús, categories, lletres, directe temàtic, Infantil)
+docs/                    especificació de l'art (no s'instal·la amb el zip)
 CHANGELOG.md              històric de versions
 README.md                 aquesta guia
 LICENSE.txt               GPL-2.0-or-later
@@ -212,7 +233,7 @@ bash scripts/build-zip.sh
 
 - `tests.test_parsing`, `tests.test_api`, `tests.test_strings`, `tests.test_matching`, `tests.test_history` i `tests.test_views` no necessiten xarxa.
 - `tests.test_live` crida les API públiques de 3Cat. Comprova que les llistes tenen elements i que una adreça HLS o MP4 respon. Un 403 de geoblocatge en TV3, vist des de fora d'Espanya, és el resultat esperat i el test el té en compte.
-- El zip queda a `dist/plugin.video.new3cat-1.0.2.zip`. El número surt de `version` a `addon.xml`. La carpeta `dist/` no es puja al git.
+- El zip queda a `dist/plugin.video.new3cat-1.0.3.zip`. El número surt de `version` a `addon.xml`. La carpeta `dist/` no es puja al git.
 
 La GitHub Action fa el mateix a cada push i a cada pull request: executa les proves unitàries i puja el zip com a artefacte. Les proves en viu es deixen per executar-les en local, perquè depenen de la xarxa i del país del servidor de GitHub.
 
@@ -223,11 +244,11 @@ La GitHub Action fa el mateix a cada push i a cada pull request: executa les pro
 3. Crea l'etiqueta amb el mateix número i una `v` al davant, i puja-la:
 
 ```bash
-git tag v1.0.2
-git push origin v1.0.2
+git tag v1.0.3
+git push origin v1.0.3
 ```
 
-4. La GitHub Action construeix el zip i crea (o actualitza) la [release](https://github.com/ferranpruneda/plugin.video.new3cat/releases) amb el zip adjunt. Fa servir el `GITHUB_TOKEN` del repositori; no cal cap secret addicional. L'etiqueta ha de dir-se `v` seguit de la versió, per exemple `v1.0.2`.
+4. La GitHub Action construeix el zip i crea (o actualitza) la [release](https://github.com/ferranpruneda/plugin.video.new3cat/releases) amb el zip adjunt. Fa servir el `GITHUB_TOKEN` del repositori; no cal cap secret addicional. L'etiqueta ha de dir-se `v` seguit de la versió, per exemple `v1.0.3`.
 
 ## Llicència
 
