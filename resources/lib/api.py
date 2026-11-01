@@ -13,6 +13,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
+from resources.lib.strings import category_title
 from resources.lib.parsing import (
     allowed_url,
     art_from_images,
@@ -33,6 +34,14 @@ USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 )
+# The catalogue is edited in Catalan. Ask for that language so a localized
+# response cannot rename sections.
+API_HEADERS = {
+    "User-Agent": USER_AGENT,
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "ca",
+    "Referer": "https://www.3cat.cat/",
+}
 
 API = "https://api.3cat.cat"
 MEDIA_HOSTS = (
@@ -114,14 +123,7 @@ class ApiError(Exception):
 
 
 def default_fetch(url, timeout=25):
-    request = Request(
-        url,
-        headers={
-            "User-Agent": USER_AGENT,
-            "Accept": "application/json, text/plain, */*",
-            "Referer": "https://www.3cat.cat/",
-        },
-    )
+    request = Request(url, headers=API_HEADERS)
     try:
         with urlopen(request, timeout=timeout) as response:
             raw = response.read()
@@ -189,7 +191,9 @@ class Client:
             found.append(
                 {
                     "slug": slug,
-                    "title": clean_title(item.get("titol_pastilla") or item.get("titol") or slug),
+                    "title": category_title(
+                        slug, item.get("titol_pastilla") or item.get("titol") or ""
+                    ),
                     "plot": clean_text(item.get("entradeta")),
                     "art": {
                         "thumb": thumb,

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
   <category label="32000">
+    <setting id="ui_language" type="enum" label="32007" lvalues="32015|32016" default="0"/>
     <setting id="stream_mode" type="enum" label="32001" lvalues="32010|32011|32012" default="0"/>
     <setting id="page_size" type="slider" label="32002" default="24" range="8,1,60" option="int"/>
     <setting id="cache_minutes" type="slider" label="32003" default="30" range="1,1,240" option="int"/>

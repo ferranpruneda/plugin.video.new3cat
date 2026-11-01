@@ -19,7 +19,7 @@ jobs:
           python-version: "3.11"
 
       - name: Proves unitàries
-        run: python -m unittest tests.test_parsing tests.test_api -v
+        run: python -m unittest tests.test_parsing tests.test_api tests.test_strings -v
 
   package:
     name: Zip instal·lable

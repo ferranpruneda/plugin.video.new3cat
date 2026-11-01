@@ -15,6 +15,7 @@ import xbmcvfs
 from resources.lib.api import ApiError, Client
 from resources.lib.cache import FileCache
 from resources.lib.parsing import present_item
+from resources.lib.strings import text as catalog_text
 
 ADDON_ID = "plugin.video.new3cat"
 FANART = "https://img.3cat.cat/multimedia/png/3/0/1697462431903_1920x1080.png"
@@ -51,6 +52,28 @@ def _int_setting(addon, key, default, low, high):
     return max(low, min(high, value))
 
 
+def _kodi_language():
+    try:
+        code = xbmc.getLanguage(xbmc.ISO_639_1)
+    except Exception:
+        return "ca"
+    return code or "ca"
+
+
+def ui_text(addon, string_id):
+    """Catalan labels by default. Setting ui_language=1 follows Kodi."""
+    follow = False
+    try:
+        follow = (addon.getSetting("ui_language") or "0") == "1"
+    except Exception:
+        follow = False
+    return catalog_text(
+        string_id,
+        follow_kodi=follow,
+        kodi_language=_kodi_language() if follow else "ca",
+    )
+
+
 class Router:
     def __init__(self, handle, base, params, addon, client):
         self.handle = handle
@@ -61,7 +84,7 @@ class Router:
         self._items = []
 
     def tr(self, string_id):
-        return self.addon.getLocalizedString(string_id)
+        return ui_text(self.addon, string_id)
 
     def notify(self, message):
         xbmcgui.Dialog().notification(self.addon.getAddonInfo("name"), message, xbmcgui.NOTIFICATION_INFO, 6000)
@@ -157,7 +180,7 @@ class Router:
                     "mediatype": "video",
                     "plot": channel.get("plot") or "",
                     "duration": channel.get("duration"),
-                    "genre": ["Directe"],
+                    "genre": [self.tr(30124)],
                 },
                 folder=False,
                 playable=True,
@@ -271,7 +294,7 @@ class Router:
             return
         for season in seasons:
             number = season.get("number")
-            label = self.tr(30109) % number if number else (season.get("title") or "Temporada")
+            label = self.tr(30109) % number if number else (season.get("title") or self.tr(30125))
             plot = shown["plot"]
             if season.get("episodes"):
                 plot = "%s\n%s" % (label, plot) if plot else label
@@ -599,7 +622,7 @@ def run(argv=None):
         Router(handle, base, params, addon, client).dispatch()
     except Exception:
         log(traceback.format_exc(), xbmc.LOGERROR)
-        xbmcgui.Dialog().notification(addon.getAddonInfo("name"), addon.getLocalizedString(30116), xbmcgui.NOTIFICATION_ERROR, 6000)
+        xbmcgui.Dialog().notification(addon.getAddonInfo("name"), ui_text(addon, 30116), xbmcgui.NOTIFICATION_ERROR, 6000)
         if params.get("action") == "play":
             xbmcplugin.setResolvedUrl(handle, False, xbmcgui.ListItem())
         else:

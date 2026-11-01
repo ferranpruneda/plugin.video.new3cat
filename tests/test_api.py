@@ -2,7 +2,7 @@
 import time
 import unittest
 
-from resources.lib.api import Client
+from resources.lib.api import API_HEADERS, Client
 from resources.lib.cache import MemoryCache
 
 
@@ -96,7 +96,7 @@ def _payload(url):
                     "item": [
                         {
                             "slug": "series",
-                            "titol_pastilla": "Sèries",
+                            "titol_pastilla": "Series",
                             "entradeta": "Sèries",
                             "img_pastilla": "https://statics.3cat.cat/series.png",
                             "imatges": [
@@ -104,7 +104,7 @@ def _payload(url):
                             ],
                         },
                         {"slug": "podcasts", "titol_pastilla": "Pòdcasts"},
-                        {"slug": "entreteniment", "titol_pastilla": "Entreteniment", "entradeta": "Humor"},
+                        {"slug": "entreteniment", "titol_pastilla": "Entretenimiento", "entradeta": "Humor"},
                     ]
                 }
             }
@@ -129,7 +129,10 @@ class ClientTests(unittest.TestCase):
     def test_categories_skip_podcasts_and_mark_fallback(self):
         categories = {item["slug"]: item for item in self.client.categories()}
         self.assertIn("series", categories)
+        self.assertEqual(categories["series"]["title"], "Sèries")
+        self.assertEqual(categories["entreteniment"]["title"], "Entreteniment")
         self.assertNotIn("podcasts", categories)
+        self.assertEqual(API_HEADERS["Accept-Language"], "ca")
         self.assertEqual(categories["entreteniment"]["fallback_tematica"], "PUENTRETENIM")
         self.assertFalse(categories["entreteniment"]["has_frontal"])
         self.assertTrue(categories["series"]["has_frontal"])

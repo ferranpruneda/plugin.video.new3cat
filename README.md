@@ -23,7 +23,7 @@ Dins d'un programa hi ha les temporades i, a dins, els capítols. Si només hi h
 
 Les llistes fan servir el tipus de contingut de Kodi (`tvshows`, `seasons`, `episodes`, `movies`) perquè les vistes de pòster, fanart, paisatge i logotip de la pell funcionin. Quan l'API envia les dades, també s'omplen la sinopsi, la durada, la data d'emissió, la temporada, el capítol i la classificació per edats.
 
-L'idioma de la interfície del complement és el català, amb castellà i anglès. Kodi fa servir l'idioma que tinguis configurat. Els títols i les sinopsis arriben en català perquè així els publica l'API.
+Els menús, els avisos i la pantalla de configuració surten **en català** encara que Kodi estigui en castellà o en anglès. A **Llengua dels menús** pots triar «La de Kodi» perquè els menús i els avisos segueixin l'idioma de Kodi (català, castellà o anglès; qualsevol altra llengua es queda en català). Els títols i les sinopsis dels programes arriben en català perquè així els publica l'API.
 
 ## Requisits
 
@@ -39,9 +39,9 @@ Orígens desconeguts: Kodi només accepta un zip de fora del repositori si els t
 
 ## On baixar el zip
 
-El fitxer es diu `plugin.video.new3cat-1.0.0.zip`. A l'arrel del zip hi ha d'haver la carpeta `plugin.video.new3cat/`. No el tornis a comprimir pel teu compte.
+El fitxer es diu `plugin.video.new3cat-1.0.1.zip`. A l'arrel del zip hi ha d'haver la carpeta `plugin.video.new3cat/`. No el tornis a comprimir pel teu compte.
 
-1. **GitHub Releases (la via recomanada).** Quan es puja una etiqueta `vX.Y.Z` (per exemple `v1.0.0`), la GitHub Action publica una release amb el zip adjunt: <https://github.com/ferranpruneda/plugin.video.new3cat/releases>. Baixa el zip d'aquesta pàgina, no el «Source code» que genera GitHub (aquell no és un complement instal·lable).
+1. **GitHub Releases (la via recomanada).** Quan es puja una etiqueta `vX.Y.Z` (per exemple `v1.0.1`), la GitHub Action publica una release amb el zip adjunt: <https://github.com/ferranpruneda/plugin.video.new3cat/releases>. Baixa el zip d'aquesta pàgina, no el «Source code» que genera GitHub (aquell no és un complement instal·lable).
 2. **Artefacte de la GitHub Action**, útil abans de la primera etiqueta o per provar un commit concret. Obre la pestanya [Actions](https://github.com/ferranpruneda/plugin.video.new3cat/actions), entra a l'execució verda del commit i baixa l'artefacte `plugin.video.new3cat`. GitHub el guarda 90 dies. L'artefacte és un zip que *conté* el zip del complement: obre'l i instal·la el `plugin.video.new3cat-*.zip` de dins.
 3. **Construir-lo tu**, si tens el codi. Mira [Construir el zip i executar les proves](#construir-el-zip-i-executar-les-proves).
 
@@ -50,7 +50,7 @@ El fitxer es diu `plugin.video.new3cat-1.0.0.zip`. A l'arrel del zip hi ha d'hav
 1. Copia el zip al dispositiu on corre Kodi (un USB, la carpeta de baixades o una carpeta compartida).
 2. Activa **Orígens desconeguts**, com s'explica a Requisits, si encara no ho has fet.
 3. Ves a **Configuració → Complements → Instal·la des d'un fitxer zip**.
-4. Localitza `plugin.video.new3cat-1.0.0.zip` i accepta'l.
+4. Localitza `plugin.video.new3cat-1.0.1.zip` i accepta'l.
 5. Quan Kodi digui que s'ha instal·lat, obre **Complements → Complements de vídeo → 3Cat**.
 
 A LibreELEC i a la majoria d'Android el camí dels menús és el mateix. Si el navegador de fitxers no veu el zip, copia'l a l'emmagatzematge que Kodi ja mostra (per exemple `Android/data/org.xbmc.kodi/files/` o una font SMB que hagis afegit).
@@ -69,6 +69,7 @@ No cal esborrar la carpeta de dades per una actualització normal.
 
 | Opció | Per defecte | Què fa |
 | --- | --- | --- |
+| Llengua dels menús | Català | Menús i avisos en català, passi el que passi amb l'idioma de Kodi. «La de Kodi» els passa al català, al castellà o a l'anglès de la interfície. La pantalla de configuració es llegeix sempre en català. |
 | Qualitat de reproducció | Automàtica | Automàtica: DASH si hi ha inputstream.adaptive, si no el MP4 més alt, i HLS als directes. DASH força el manifest adaptatiu (amb MP4 de reserva si no hi ha inputstream). MP4 demana el fitxer progressiu, que és el més compatible. |
 | Elements per pàgina | 24 (entre 8 i 60) | Quants programes, capítols o resultats de cerca s'ensenyen abans de «Pàgina següent». |
 | Memòria cau de l'API (minuts) | 30 (entre 1 i 240) | Quant de temps es reutilitzen les llistes del catàleg. Els directes i les adreces de vídeo tenen una caducitat més curta, fixa al codi. |
@@ -157,14 +158,14 @@ tests/                    proves unitàries i proves contra l'API pública
 Cal Python 3.9 o superior (el de Kodi 20/21 en té prou; per les proves, 3.11 va bé), `bash`, `tar` i `zip`. No cal instal·lar Kodi.
 
 ```bash
-python3 -m unittest tests.test_parsing tests.test_api -v
+python3 -m unittest tests.test_parsing tests.test_api tests.test_strings -v
 python3 -m unittest tests.test_live -v
 bash scripts/build-zip.sh
 ```
 
-- `tests.test_parsing` i `tests.test_api` no necessiten xarxa.
+- `tests.test_parsing`, `tests.test_api` i `tests.test_strings` no necessiten xarxa.
 - `tests.test_live` crida les API públiques de 3Cat. Comprova que les llistes tenen elements i que una adreça HLS o MP4 respon. Un 403 de geoblocatge en TV3, vist des de fora d'Espanya, és el resultat esperat i el test el té en compte.
-- El zip queda a `dist/plugin.video.new3cat-1.0.0.zip`. El número surt de `version` a `addon.xml`. La carpeta `dist/` no es puja al git.
+- El zip queda a `dist/plugin.video.new3cat-1.0.1.zip`. El número surt de `version` a `addon.xml`. La carpeta `dist/` no es puja al git.
 
 La GitHub Action fa el mateix a cada push i a cada pull request: executa les proves unitàries i puja el zip com a artefacte. Les proves en viu es deixen per executar-les en local, perquè depenen de la xarxa i del país del servidor de GitHub.
 
@@ -175,11 +176,11 @@ La GitHub Action fa el mateix a cada push i a cada pull request: executa les pro
 3. Crea l'etiqueta amb el mateix número i una `v` al davant, i puja-la:
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.0.1
+git push origin v1.0.1
 ```
 
-4. La GitHub Action construeix el zip i crea (o actualitza) la [release](https://github.com/ferranpruneda/plugin.video.new3cat/releases) amb el zip adjunt. Fa servir el `GITHUB_TOKEN` del repositori; no cal cap secret addicional. L'etiqueta ha de dir-se `v` seguit de la versió, per exemple `v1.0.0`.
+4. La GitHub Action construeix el zip i crea (o actualitza) la [release](https://github.com/ferranpruneda/plugin.video.new3cat/releases) amb el zip adjunt. Fa servir el `GITHUB_TOKEN` del repositori; no cal cap secret addicional. L'etiqueta ha de dir-se `v` seguit de la versió, per exemple `v1.0.1`.
 
 ## Llicència
 

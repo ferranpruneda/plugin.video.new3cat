@@ -33,6 +33,18 @@ msgctxt "#32006"
 msgid "Show thematic live channels"
 msgstr "Mostra els canals temàtics en directe"
 
+msgctxt "#32007"
+msgid "Menu language"
+msgstr "Llengua dels menús"
+
+msgctxt "#32015"
+msgid "Catalan"
+msgstr "Català"
+
+msgctxt "#32016"
+msgid "Kodi language"
+msgstr "La de Kodi"
+
 msgctxt "#32010"
 msgid "Automatic"
 msgstr "Automàtica"
@@ -132,3 +144,11 @@ msgstr "Text a cercar"
 msgctxt "#30123"
 msgid "This section is not available."
 msgstr "Aquesta secció no està disponible."
+
+msgctxt "#30124"
+msgid "Live"
+msgstr "Directe"
+
+msgctxt "#30125"
+msgid "Season"
+msgstr "Temporada"

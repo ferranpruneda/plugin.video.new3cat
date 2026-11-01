@@ -2,6 +2,12 @@
 
 El format segueix [Keep a Changelog](https://keepachangelog.com/). Les versions del complement són les de `addon.xml`. Una etiqueta `vX.Y.Z` al repositori publica el zip d'aquella versió a GitHub Releases.
 
+## [1.0.1] - 2026-11-01
+
+- Els menús, els avisos i les etiquetes de configuració es mostren en català encara que la interfície de Kodi sigui en un altre idioma.
+- Nova opció «Llengua dels menús»: Català (per defecte) o la llengua de Kodi (català, castellà o anglès).
+- Els noms de les categories conegudes es forcen en català, i les peticions a l'API demanen `Accept-Language: ca`.
+
 ## [1.0.0] - 2026-10-31
 
 Primera versió instal·lable.
