@@ -17,6 +17,7 @@ from resources.lib.api import ApiError, Client
 from resources.lib.artwork import (
     addon_fanart,
     category_art,
+    kids_filename,
     letter_art,
     live_art,
     menu_art,
@@ -42,6 +43,9 @@ from resources.lib.views import (
     SECTION_SETTING,
     VIEW_APPLIED_PROPERTY,
     VIEW_PICKED_SETTING,
+    MENU_VIEW_EPOCH_SETTING,
+    OLD_MENU_FORCED_VIEW,
+    SUPPRESS_MENU_VIEW_PROPERTY,
     VIEW_SECTION_PROPERTY,
     VIDEO_NAV_WINDOW,
     directory_content,
@@ -49,6 +53,7 @@ from resources.lib.views import (
     fill_art,
     listing_section,
     manual_view_update,
+    migrate_picked_menu,
     resolve_directory_view,
     section_view,
 )
@@ -153,6 +158,7 @@ class Router:
         return {"0": "auto", "1": "dash", "2": "mp4"}.get(value, "auto")
 
     def dispatch(self):
+        self._migrate_menu_view()
         self._capture_previous_view()
         action = self.params.get("action") or "root"
         method = getattr(self, "action_" + action, None)
@@ -216,6 +222,24 @@ class Router:
         except Exception:
             return False
 
+    def _migrate_menu_view(self):
+        """Forget a v1.0.3 InfoWall id so menus open on the poster default."""
+        try:
+            epoch = self.addon.getSetting(MENU_VIEW_EPOCH_SETTING) or ""
+            saved = self.addon.getSetting(VIEW_PICKED_SETTING["menu"]) or ""
+        except Exception:
+            return
+        new_saved, new_epoch, suppress = migrate_picked_menu(saved, epoch)
+        try:
+            if new_epoch != epoch:
+                self.addon.setSetting(MENU_VIEW_EPOCH_SETTING, new_epoch)
+            if new_saved != saved:
+                self.addon.setSetting(VIEW_PICKED_SETTING["menu"], new_saved)
+            if suppress:
+                xbmcgui.Window(VIDEO_NAV_WINDOW).setProperty(SUPPRESS_MENU_VIEW_PROPERTY, str(suppress))
+        except Exception:
+            return
+
     def _capture_previous_view(self):
         """Store a manual view change before this call replaces the directory."""
         try:
@@ -226,6 +250,7 @@ class Router:
                 window.getProperty(VIEW_SECTION_PROPERTY),
                 window.getProperty(VIEW_APPLIED_PROPERTY),
                 xbmc.getInfoLabel("Container.Viewmode"),
+                window.getProperty(SUPPRESS_MENU_VIEW_PROPERTY),
             )
         except Exception:
             return
@@ -255,6 +280,8 @@ class Router:
             window = xbmcgui.Window(VIDEO_NAV_WINDOW)
             window.setProperty(VIEW_SECTION_PROPERTY, section or "")
             window.setProperty(VIEW_APPLIED_PROPERTY, "" if not view_id else str(view_id))
+            if view_id and view_id != OLD_MENU_FORCED_VIEW:
+                window.setProperty(SUPPRESS_MENU_VIEW_PROPERTY, "")
         except Exception:
             pass
         if not view_id:
@@ -1021,11 +1048,16 @@ def _first_id(entries):
 
 def _kids_file(name):
     root = xbmcvfs.translatePath(xbmcaddon.Addon(ADDON_ID).getAddonInfo("path"))
-    return os.path.join(root, "resources", "media", "kids", name)
+    return os.path.join(root, "resources", "media", "kids", kids_filename(name))
 
 
 def _kids_art(kind):
-    """Poster-friendly art for one Infantil folder. Shared colourful background."""
+    """Poster-friendly art for one Infantil folder. Shared colourful background.
+
+    Filenames carry a version suffix. Kodi's texture cache keys on the
+    path, so a same-named replacement of the 1.0.2 drawings would stay
+    invisible after an upgrade.
+    """
     icon = _kids_file("icon-%s.png" % kind)
     poster = _kids_file("poster-%s.png" % kind)
     background = _kids_file("fanart.png")

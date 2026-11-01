@@ -2,6 +2,13 @@
 
 El format segueix [Keep a Changelog](https://keepachangelog.com/). Les versions del complement són les de `addon.xml`. Una etiqueta `vX.Y.Z` al repositori publica el zip d'aquella versió a GitHub Releases.
 
+## [1.0.4] - 2026-11-01
+
+- Els menús i les pàgines de carpetes s'obren per defecte en pòster (vista 51 d'Estuary), no en mur amb informació. Els vídeos, els directes i els capítols segueixen en llista ampla (55) i els programes en mur (500). El contingut dels menús continua sent `tvshows`, que és on Estuary permet el pòster.
+- En actualitzar des de la 1.0.3, si `view_picked_menu` val 54 (el mur amb informació que el complement hi posava sol), s'esborra una sola vegada perquè s'apliqui el pòster nou. Una tria feta després, també si algú torna a triar el 54, es conserva. Les vistes desades de vídeos i de programes no es toquen.
+- La icona del complement torna a ser el logo de 3Cat de la 1.0.2 (`resources/icon-3cat.png`). El fons nou de la 1.0.3 es conserva, amb el nom `fanart-v2.jpg`.
+- Les imatges d'Infantil canvien de camí (`*-v2.png`). La 1.0.3 havia substituït els fitxers sense canviar-ne el nom, i la cau de textures de Kodi (`Textures13.db` i `Thumbnails`) continuava servint els dibuixos de la 1.0.2.
+
 ## [1.0.3] - 2026-11-01
 
 - Els menús i les pàgines de carpetes s'obren en mur amb informació (vista 54 d'Estuary, la mateixa a Kodi 20 i 21): menú principal, Infantil, Per edats, categories, lletres A-Z, l'índex d'El més vist i les files d'una secció. Aquestes llistes es marquen com a sèries (`tvshows`). Al mur amb informació d'Estuary 20 i 21, `videos` dibuixa el pòster dins una fitxa apaïsada de 316×218; `tvshows` el mostra a 290×415, sense encaixar un pòster vertical en aquella fitxa.

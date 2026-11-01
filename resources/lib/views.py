@@ -43,12 +43,12 @@ SECTION_SETTING = {
     "programme": "view_programmes",
 }
 SECTION_DEFAULTS = {
-    "menu": "infowall",
+    "menu": "poster",
     "video": "widelist",
     "programme": "wall",
 }
 SECTION_DEFAULT_INDEX = {
-    "menu": "2",
+    "menu": "1",
     "video": "3",
     "programme": "0",
 }
@@ -99,6 +99,12 @@ VIEW_PICKED_SETTING = {
     "video": "view_picked_video",
     "programme": "view_picked_programme",
 }
+# v1.0.3 forced InfoWall on menus. A stored 54 is that default, not a
+# later manual choice, until this epoch has been applied once.
+MENU_VIEW_EPOCH = "1.0.4"
+MENU_VIEW_EPOCH_SETTING = "view_menu_epoch"
+OLD_MENU_FORCED_VIEW = ESTUARY_INFOWALL
+SUPPRESS_MENU_VIEW_PROPERTY = "new3cat.suppress_menu_view"
 
 
 def parse_viewmode(value):
@@ -112,23 +118,40 @@ def parse_viewmode(value):
     return number
 
 
-def manual_view_update(previous_section, applied_view, current_viewmode):
+def manual_view_update(previous_section, applied_view, current_viewmode, suppress_view=None):
     """Return (section, view id) when the visible view is not the one we set.
 
     previous_section and applied_view are what the plugin stored on the
     video window. current_viewmode is Container.Viewmode while that
     directory is still the one on screen. The same id means the user
-    left the view alone.
+    left the view alone. suppress_view skips the old forced menu id
+    while an upgrade is still showing it.
     """
     if previous_section not in VIEW_PICKED_SETTING:
         return None
     current = parse_viewmode(current_viewmode)
     if current is None:
         return None
+    if previous_section == "menu" and current == parse_viewmode(suppress_view):
+        return None
     applied = parse_viewmode(applied_view)
     if applied is not None and current == applied:
         return None
     return (previous_section, current)
+
+
+def migrate_picked_menu(saved, epoch):
+    """Drop a stored InfoWall (54) left by v1.0.3, once.
+
+    Returns (saved_value, epoch, suppress_view_id_or_None). Other saved
+    ids, including a later manual 54, stay. An empty saved value is left
+    empty so the new poster default is used while forcing is on.
+    """
+    if epoch == MENU_VIEW_EPOCH:
+        return saved or "", epoch, None
+    if parse_viewmode(saved) == OLD_MENU_FORCED_VIEW:
+        return "", MENU_VIEW_EPOCH, OLD_MENU_FORCED_VIEW
+    return saved or "", MENU_VIEW_EPOCH, None
 
 
 def resolve_directory_view(skin_dir, force, default_view_id, saved_view_id):
