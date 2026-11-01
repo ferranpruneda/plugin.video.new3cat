@@ -5,18 +5,25 @@ import sys
 import unittest
 from pathlib import Path
 
+import hashlib
+
 from resources.lib.artwork import (
     SHIPPED_MEDIA,
     addon_fanart,
+    addon_icon,
     addon_path,
     category_art,
     fast_poster,
+    kids_filename,
     letter_art,
     live_art,
     menu_art,
     ranking_row_art,
     shelf_slug,
 )
+
+# icon.png from tag v1.0.2 (same bytes as v1.0.0).
+LOGO_SHA256 = "717b46e5bee052c80e96dcc6855796c9f6faba331c48c4c3542b2c5121d3220f"
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -42,19 +49,27 @@ class ArtworkTests(unittest.TestCase):
                     self.assertEqual(_png_size(data), (512, 512), relative)
             else:
                 self.assertTrue(data.startswith(b"\xff\xd8\xff"), relative)
-        icon = (ROOT / "icon.png").read_bytes()
-        fanart = (ROOT / "fanart.jpg").read_bytes()
-        self.assertTrue(icon.startswith(b"\x89PNG\r\n\x1a\n"))
+        self.assertFalse((ROOT / "icon.png").exists())
+        self.assertFalse((ROOT / "fanart.jpg").exists())
+        self.assertFalse(any(not path.name.endswith("-v2.png") for path in (ROOT / "resources" / "media" / "kids").glob("*.png")))
+        icon = pathlib_read(addon_icon())
+        fanart = pathlib_read(addon_fanart())
+        self.assertEqual(hashlib.sha256(icon).hexdigest(), LOGO_SHA256)
         self.assertEqual(_png_size(icon), (512, 512))
         self.assertTrue(fanart.startswith(b"\xff\xd8\xff"))
-        self.assertEqual(addon_fanart(), str(ROOT / "fanart.jpg"))
+        self.assertTrue(addon_icon().endswith("resources/icon-3cat.png"))
+        self.assertTrue(addon_fanart().endswith("fanart-v2.jpg"))
+        self.assertEqual(kids_filename("poster-home.png"), "poster-home-v2.png")
+        self.assertEqual(kids_filename("poster-home-v2.png"), "poster-home-v2.png")
 
     def test_categories_letters_and_channels_map_to_their_posters(self):
         series = category_art("series")
         self.assertTrue(series["poster"].endswith("categories/poster-series.png"))
         self.assertTrue(series["fanart"].endswith("categories/fanart-series.jpg"))
         sx3 = category_art("sx3")
-        self.assertTrue(sx3["poster"].endswith("kids/poster-home.png"))
+        self.assertTrue(sx3["poster"].endswith("kids/poster-home-v2.png"))
+        self.assertTrue(sx3["icon"].endswith("kids/icon-home-v2.png"))
+        self.assertTrue(sx3["fanart"].endswith("kids/fanart-v2.png"))
         unknown = category_art("una-categoria-nova")
         self.assertTrue(unknown["poster"].endswith("categories/poster-generic.png"))
         self.assertTrue(unknown["fanart"].endswith("categories/fanart-generic.jpg"))
@@ -115,6 +130,10 @@ class ArtworkTests(unittest.TestCase):
 
 def os_path_exists(path):
     return Path(path).is_file() and path.startswith(str(addon_path("resources", "media")))
+
+
+def pathlib_read(path):
+    return Path(path).read_bytes()
 
 
 if __name__ == "__main__":

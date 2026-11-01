@@ -3,7 +3,7 @@
   <category label="32000">
     <setting id="ui_language" type="enum" label="32007" lvalues="32015|32016" default="0"/>
     <setting id="force_view" type="bool" label="32022" default="true"/>
-    <setting id="view_menus" type="enum" label="32028" lvalues="32024|32025|32026|32027" default="2"/>
+    <setting id="view_menus" type="enum" label="32028" lvalues="32024|32025|32026|32027" default="1"/>
     <setting id="view_videos" type="enum" label="32029" lvalues="32024|32025|32026|32027" default="3"/>
     <setting id="view_programmes" type="enum" label="32030" lvalues="32024|32025|32026|32027" default="0"/>
     <setting id="stream_mode" type="enum" label="32001" lvalues="32010|32011|32012" default="0"/>

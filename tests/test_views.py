@@ -16,6 +16,7 @@ from resources.lib.views import (
     fill_art,
     listing_section,
     manual_view_update,
+    migrate_picked_menu,
     parse_viewmode,
     resolve_directory_view,
     section_view,
@@ -44,7 +45,7 @@ class ViewTests(unittest.TestCase):
         self.assertEqual(estuary_view_id("skin.estuary", True, "no-such", "tvshows"), ESTUARY_WALL)
 
     def test_section_defaults_match_the_estuary_ids(self):
-        self.assertEqual(section_view("menu", ""), "infowall")
+        self.assertEqual(section_view("menu", ""), "poster")
         self.assertEqual(section_view("video", ""), "widelist")
         self.assertEqual(section_view("programme", ""), "wall")
         for section, index in SECTION_DEFAULT_INDEX.items():
@@ -54,9 +55,10 @@ class ViewTests(unittest.TestCase):
         self.assertEqual(section_view("video", "2"), "infowall")
         self.assertEqual(section_view("programme", "1"), "poster")
         self.assertEqual(section_view("programme", "9"), "wall")
+        menu_content = directory_content("menu", "videos")
         self.assertEqual(
-            estuary_view_id("skin.estuary", True, section_view("menu", ""), "videos"),
-            ESTUARY_INFOWALL,
+            estuary_view_id("skin.estuary", True, section_view("menu", ""), menu_content),
+            ESTUARY_POSTER,
         )
         self.assertEqual(
             estuary_view_id("skin.estuary", True, section_view("video", ""), "episodes"),
@@ -114,6 +116,15 @@ class ViewTests(unittest.TestCase):
         self.assertIsNone(manual_view_update("", "54", "50"))
         self.assertIsNone(manual_view_update("menu", "54", ""))
         self.assertIsNone(manual_view_update("other", "54", "50"))
+        self.assertIsNone(manual_view_update("menu", "", "54", "54"))
+        self.assertEqual(manual_view_update("menu", "", "50", "54"), ("menu", 50))
+
+    def test_upgrade_drops_the_old_infowall_menu_pick_once(self):
+        self.assertEqual(migrate_picked_menu("54", ""), ("", "1.0.4", 54))
+        self.assertEqual(migrate_picked_menu("54", "1.0.4"), ("54", "1.0.4", None))
+        self.assertEqual(migrate_picked_menu("51", ""), ("51", "1.0.4", None))
+        self.assertEqual(migrate_picked_menu("", ""), ("", "1.0.4", None))
+        self.assertEqual(migrate_picked_menu("500", ""), ("500", "1.0.4", None))
 
     def test_listing_section_keeps_programmes_and_sends_videos_to_the_wide_list(self):
         self.assertEqual(listing_section("tvshows"), "programme")

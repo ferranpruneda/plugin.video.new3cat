@@ -40,26 +40,26 @@ SHIPPED_MEDIA = (
     "categories/poster-series.png",
     "common/poster-fallback.png",
     "common/poster-next-page.png",
-    "kids/banner.png",
-    "kids/fanart.png",
-    "kids/icon-age10.png",
-    "kids/icon-age7.png",
-    "kids/icon-ages.png",
-    "kids/icon-highlights.png",
-    "kids/icon-home.png",
-    "kids/icon-live.png",
-    "kids/icon-petits.png",
-    "kids/icon-programmes.png",
-    "kids/icon-tots.png",
-    "kids/poster-age10.png",
-    "kids/poster-age7.png",
-    "kids/poster-ages.png",
-    "kids/poster-highlights.png",
-    "kids/poster-home.png",
-    "kids/poster-live.png",
-    "kids/poster-petits.png",
-    "kids/poster-programmes.png",
-    "kids/poster-tots.png",
+    "kids/banner-v2.png",
+    "kids/fanart-v2.png",
+    "kids/icon-age10-v2.png",
+    "kids/icon-age7-v2.png",
+    "kids/icon-ages-v2.png",
+    "kids/icon-highlights-v2.png",
+    "kids/icon-home-v2.png",
+    "kids/icon-live-v2.png",
+    "kids/icon-petits-v2.png",
+    "kids/icon-programmes-v2.png",
+    "kids/icon-tots-v2.png",
+    "kids/poster-age10-v2.png",
+    "kids/poster-age7-v2.png",
+    "kids/poster-ages-v2.png",
+    "kids/poster-highlights-v2.png",
+    "kids/poster-home-v2.png",
+    "kids/poster-live-v2.png",
+    "kids/poster-petits-v2.png",
+    "kids/poster-programmes-v2.png",
+    "kids/poster-tots-v2.png",
     "letters/poster-all.png",
     "letters/poster-letter-a.png",
     "letters/poster-letter-b.png",
@@ -145,7 +145,23 @@ def media_path(*parts):
 
 
 def addon_fanart():
-    return addon_path("fanart.jpg")
+    # New path so Kodi does not keep the pre-1.0.3 background from Textures13.db.
+    return addon_path("fanart-v2.jpg")
+
+
+def addon_icon():
+    """3Cat logo from v1.0.2, under a path the 1.0.3 icon never used."""
+    return addon_path("resources", "icon-3cat.png")
+
+
+def kids_filename(name):
+    """Suffix kids art so an upgrade does not reuse the 1.0.2 texture cache."""
+    stem, ext = os.path.splitext(name or "")
+    if not stem or not ext:
+        return name or ""
+    if stem.endswith("-v2"):
+        return name
+    return stem + "-v2" + ext
 
 
 def poster_fallback():
@@ -173,9 +189,9 @@ def category_art(slug):
     """
     if slug == "sx3":
         return {
-            "poster": media_path("kids", "poster-home.png"),
-            "icon": media_path("kids", "icon-home.png"),
-            "fanart": media_path("kids", "fanart.png"),
+            "poster": media_path("kids", kids_filename("poster-home.png")),
+            "icon": media_path("kids", kids_filename("icon-home.png")),
+            "fanart": media_path("kids", kids_filename("fanart.png")),
         }
     poster = media_path("categories", "poster-%s.png" % (slug or "generic"))
     fanart = media_path("categories", "fanart-%s.jpg" % (slug or "generic"))
