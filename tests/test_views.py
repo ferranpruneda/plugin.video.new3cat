@@ -15,6 +15,9 @@ from resources.lib.views import (
     estuary_view_id,
     fill_art,
     listing_section,
+    manual_view_update,
+    parse_viewmode,
+    resolve_directory_view,
     section_view,
 )
 
@@ -90,6 +93,28 @@ class ViewTests(unittest.TestCase):
         self.assertEqual(estuary_view_id("skin.estuary", True, "poster", shown), ESTUARY_POSTER)
         self.assertEqual(estuary_view_id("skin.estuary", True, "widelist", "episodes"), ESTUARY_WIDELIST)
 
+    def test_back_navigation_reapplies_the_section_view(self):
+        # Force on: the configured default wins over a view the user tried.
+        self.assertEqual(resolve_directory_view("skin.estuary", True, 54, "50"), 54)
+        self.assertEqual(resolve_directory_view("skin.estuary", True, 55, ""), 55)
+        self.assertIsNone(resolve_directory_view("skin.estuary", True, None, "55"))
+        # Force off: only the remembered manual choice is put back.
+        self.assertEqual(resolve_directory_view("skin.estuary", False, 54, "51"), 51)
+        self.assertIsNone(resolve_directory_view("skin.estuary", False, 54, ""))
+        self.assertIsNone(resolve_directory_view("skin.aeon.nox", True, 54, "51"))
+        self.assertIsNone(resolve_directory_view("skin.estuary", False, 54, "WideList"))
+
+    def test_manual_view_change_is_stored_per_section(self):
+        self.assertEqual(parse_viewmode("54"), 54)
+        self.assertIsNone(parse_viewmode(""))
+        self.assertIsNone(parse_viewmode("InfoWall"))
+        self.assertIsNone(manual_view_update("menu", "54", "54"))
+        self.assertEqual(manual_view_update("menu", "54", "51"), ("menu", 51))
+        self.assertEqual(manual_view_update("video", "", "55"), ("video", 55))
+        self.assertIsNone(manual_view_update("", "54", "50"))
+        self.assertIsNone(manual_view_update("menu", "54", ""))
+        self.assertIsNone(manual_view_update("other", "54", "50"))
+
     def test_listing_section_keeps_programmes_and_sends_videos_to_the_wide_list(self):
         self.assertEqual(listing_section("tvshows"), "programme")
         self.assertEqual(listing_section("episodes"), "video")
@@ -122,6 +147,10 @@ class ViewTests(unittest.TestCase):
         self.assertEqual(kept["poster"], "https://img.example/poster.jpg")
         self.assertEqual(kept["thumb"], "https://img.example/thumb.jpg")
         self.assertEqual(kept["fanart"], "https://img.example/poster.jpg")
+        empty = fill_art({}, "https://img.example/fallback-poster.png", "https://img.example/fanart.jpg")
+        self.assertEqual(empty["poster"], "https://img.example/fallback-poster.png")
+        self.assertEqual(empty["thumb"], "https://img.example/fallback-poster.png")
+        self.assertEqual(empty["fanart"], "https://img.example/fanart.jpg")
 
 
 if __name__ == "__main__":

@@ -90,6 +90,61 @@ def listing_section(content):
     return "video"
 
 
+# Video window (MyVideoNav). The plugin records which section is on screen.
+VIDEO_NAV_WINDOW = 10025
+VIEW_SECTION_PROPERTY = "new3cat.section"
+VIEW_APPLIED_PROPERTY = "new3cat.applied"
+VIEW_PICKED_SETTING = {
+    "menu": "view_picked_menu",
+    "video": "view_picked_video",
+    "programme": "view_picked_programme",
+}
+
+
+def parse_viewmode(value):
+    """Container.Viewmode as an int, or None when it is missing or a label."""
+    text = str(value or "").strip()
+    if not text.isdigit():
+        return None
+    number = int(text)
+    if number < 1 or number > 9999:
+        return None
+    return number
+
+
+def manual_view_update(previous_section, applied_view, current_viewmode):
+    """Return (section, view id) when the visible view is not the one we set.
+
+    previous_section and applied_view are what the plugin stored on the
+    video window. current_viewmode is Container.Viewmode while that
+    directory is still the one on screen. The same id means the user
+    left the view alone.
+    """
+    if previous_section not in VIEW_PICKED_SETTING:
+        return None
+    current = parse_viewmode(current_viewmode)
+    if current is None:
+        return None
+    applied = parse_viewmode(applied_view)
+    if applied is not None and current == applied:
+        return None
+    return (previous_section, current)
+
+
+def resolve_directory_view(skin_dir, force, default_view_id, saved_view_id):
+    """View id to apply for this directory, or None to leave the skin alone.
+
+    Forcing uses the section default, including after Back. Otherwise a
+    view the user chose for this section type is applied again. With no
+    saved choice the skin is not overwritten. Other skins are never forced.
+    """
+    if not str(skin_dir or "").startswith("skin.estuary"):
+        return None
+    if force:
+        return default_view_id
+    return parse_viewmode(saved_view_id)
+
+
 def estuary_view_id(skin_dir, force, view_type, content):
     """Return an Estuary view id, or None when the view must not be forced.
 
@@ -116,8 +171,12 @@ def _choice_at(value, default_name):
     return VIEW_CHOICES[index]
 
 
-def fill_art(art, fallback=""):
-    """Make sure a wall or poster has an image even if the API sent only one."""
+def fill_art(art, fallback="", fanart_fallback=""):
+    """Make sure a wall or poster has an image even if the API sent only one.
+
+    fallback is the poster used when the item has no picture at all.
+    fanart_fallback is the wide background used when the item has no fanart.
+    """
     filled = {key: value for key, value in (art or {}).items() if value}
     picture = (
         filled.get("poster")
@@ -127,7 +186,7 @@ def fill_art(art, fallback=""):
         or filled.get("fanart")
         or fallback
     )
-    wide = filled.get("fanart") or filled.get("landscape") or filled.get("banner") or picture
+    wide = filled.get("fanart") or filled.get("landscape") or filled.get("banner") or fanart_fallback or picture
     if picture:
         filled.setdefault("poster", picture)
         filled.setdefault("thumb", picture)

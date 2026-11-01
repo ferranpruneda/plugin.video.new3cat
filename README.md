@@ -30,7 +30,7 @@ Les llistes fan servir el tipus de contingut de Kodi (`tvshows`, `seasons`, `epi
 
 A Kodi 20 (Nexus) i Kodi 21 (Omega), `addons/skin.estuary/xml/MyVideoNav.xml` declara les mateixes vistes: `50,51,52,53,54,55,500,501,502`. El mur amb informació és el control 54 (`View_54_InfoWall.xml`) i la llista ampla és el control 55 (`View_55_WideList.xml`). El mur és el 500 i el pòster el 51. El pòster només el mostra Estuary en sèries, pel·lícules i temporades; si es tria en una altra llista, el complement passa al mur.
 
-Cada tipus de pàgina té la seva vista. Amb **Força la vista d'Estuary** activat (és el valor per defecte), després de construir la llista es crida `Container.SetViewMode` amb el número d'aquell tipus. Si la pell no és Estuary, no es força cap vista. Cada element rep pòster, miniatura i icona, encara que l'API només hagi enviat una imatge.
+Cada tipus de pàgina té la seva vista. Amb **Força la vista d'Estuary** activat (és el valor per defecte), després de construir la llista es crida `Container.SetViewMode` amb el número d'aquell tipus, també en tornar enrere. Les llistes no es guarden a la cau de directoris de Kodi: si es guardessin, enrere no tornaria a executar el complement i la pell es quedaria la vista de la pantalla anterior. Els menús i els programes són tots dos `tvshows`, així que Estuary no els pot recordar per separat. Si es desactiva l'opció, una vista canviada des del menú lateral es desa per a aquell tipus de pantalla (menús, vídeos o programes) i es torna a aplicar; el valor per defecte no la tapa. Si la pell no és Estuary, no es força cap vista. Cada element rep pòster, miniatura i icona, encara que l'API només hagi enviat una imatge.
 
 | Pàgina | Vista per defecte |
 | --- | --- |
@@ -63,7 +63,15 @@ Quan mires un vídeo, el complement apunta en aquest aparell el títol, el progr
 
 ## Infantil
 
-La secció **Infantil** és el racó dels petits, separat de la resta del catàleg. Les carpetes tenen dibuixos originals (sol, arc de Sant Martí, globus, estels i números), un fons de cel i muntanyes, i un bàner. Cada element porta icona, miniatura, pòster, fanart, paisatge i bàner. El menú d'Infantil, el de Per edats i els destacats s'obren en mur amb informació; els programes de dins segueixen la vista de programes. El logotip oficial del SX3 només es fa servir com a marca petita (`clearlogo`), tal com el publica 3Cat. Els programes de dins conserven el seu pòster.
+La secció **Infantil** és el racó dels petits, separat de la resta del catàleg. Les carpetes tenen dibuixos aprovats (icona, pòster 2:3, fons i bàner). El menú d'Infantil, el de Per edats i els destacats s'obren en mur amb informació; els programes de dins segueixen la vista de programes i conserven el pòster de 3Cat. El logotip oficial del SX3 només es fa servir com a marca petita (`clearlogo`).
+
+## Imatges
+
+Els menús, les categories, les lletres i la cerca fan servir pòsters 2:3 propis (`resources/media/`). No hi ha versions apaïsades ni icones separades per a aquestes seccions: la fitxa és el pòster i el fons de la secció és el fanart. La categoria SX3 reutilitza el pòster d'Infantil. Una categoria desconeguda fa servir el pòster genèric.
+
+Els programes, els capítols, les novetats i els resultats de cerca continuen amb les caràtules de 3Cat. Si un element no en porta cap, el complement hi posa `resources/media/common/poster-fallback.png` i, de fons, `fanart.jpg`.
+
+A **Directes**, TV3, 3CatInfo, SX3, 33, Esport3 i TV3CAT mostren la imatge del programa en antena i conserven el logotip oficial. Els canals temàtics tenen un pòster propi (Verdi Clàssics, Anime, Joc de cartes, Doraemon, Plats bruts, Vinagre(ta) i les càmeres del temps). Un canal temàtic nou fa servir el pòster genèric. Les lletres del catàleg, de la «#» a la Z, tenen cadascuna el seu pòster. L'especificació completa és a `docs/specs.md`.
 
 - **SX3 en directe:** el canal infantil.
 - **Programes del SX3:** tot el que l'API marca amb el canal `PUC_S3`.
@@ -193,7 +201,8 @@ addon.xml                 manifest de Kodi (versió, resum, llicència, codi fon
 addon.py                  punt d'entrada
 service.py                segueix el reproductor i desa el minut en local
 icon.png / fanart.jpg     imatges del complement
-resources/media/kids/     dibuixos originals de la secció Infantil
+resources/media/         pòsters i fons (menús, categories, lletres, directe temàtic, Infantil)
+docs/                    especificació de l'art (no s'instal·la amb el zip)
 CHANGELOG.md              històric de versions
 README.md                 aquesta guia
 LICENSE.txt               GPL-2.0-or-later

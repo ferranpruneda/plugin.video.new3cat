@@ -20,6 +20,7 @@ tar -C "$ROOT" -cf - \
   --exclude='./dist' \
   --exclude='./tests' \
   --exclude='./scripts' \
+  --exclude='./docs' \
   --exclude='./.gitignore' \
   --exclude='__pycache__' \
   --exclude='*.pyc' \
