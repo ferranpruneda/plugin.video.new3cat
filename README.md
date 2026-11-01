@@ -26,7 +26,7 @@ Les llistes fan servir el tipus de contingut de Kodi (`tvshows`, `seasons`, `epi
 
 ## Infantil
 
-La secció **Infantil** és el racó dels petits, separat de la resta del catàleg. Porta el logotip i el fons del SX3, i les llistes de programes s'obren com a sèries perquè la pell pugui mostrar pòsters.
+La secció **Infantil** és el racó dels petits, separat de la resta del catàleg. Les carpetes tenen dibuixos originals (sol, arc de Sant Martí, globus, estels i números), un fons de cel i muntanyes, i un bàner. Cada element porta icona, miniatura, pòster, fanart, paisatge i bàner, i les llistes s'obren com a sèries perquè la pell pugui mostrar pòsters. El logotip oficial del SX3 només es fa servir com a marca petita (`clearlogo`), tal com el publica 3Cat. Els programes de dins conserven el seu pòster.
 
 - **SX3 en directe:** el canal infantil.
 - **Programes del SX3:** tot el que l'API marca amb el canal `PUC_S3`.

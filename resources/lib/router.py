@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 import traceback
 from urllib.parse import parse_qsl, urlencode
@@ -19,8 +20,9 @@ from resources.lib.strings import text as catalog_text
 
 ADDON_ID = "plugin.video.new3cat"
 FANART = "https://img.3cat.cat/multimedia/png/3/0/1697462431903_1920x1080.png"
-KIDS_FANART = "https://apptv.3cat.cat/apptv/_resources/imatges/tematiques/superdestacat/sx3_960x540.jpg"
-KIDS_ICON = "https://statics.3cat.cat/recursos/3play/img/logo-sx3.png"
+# Official SX3 mark from 3Cat, used only as a small clearlogo. The colourful
+# icons and backgrounds are original drawings in resources/media/kids.
+SX3_CLEARLOGO = "https://statics.3cat.cat/recursos/3play/img/logo-sx3.png"
 
 MIME = {
     "hls": "application/vnd.apple.mpegurl",
@@ -174,7 +176,7 @@ class Router:
         self.add(
             self.url(action="kids"),
             self.tr(30130),
-            art=_kids_art(),
+            art=_kids_art("home"),
             info={"mediatype": "tvshow", "plot": self.tr(30139)},
         )
         for action, label, image in rest:
@@ -183,49 +185,49 @@ class Router:
         self.finish("videos", name, cache=False)
 
     def action_kids(self):
-        art = _kids_art()
         self.add(
             self.url(action="play", channel_id="sx3", title=self.tr(30131)),
             self.tr(30131),
-            art=art,
+            art=_kids_art("live"),
             info={"mediatype": "video", "plot": self.tr(30140), "genre": [self.tr(30124)]},
             folder=False,
             playable=True,
         )
-        self._add_kids_folder(self.tr(30132), self.tr(30141), canal="PUC_S3")
+        self._add_kids_folder(self.tr(30132), self.tr(30141), canal="PUC_S3", kind="programmes")
         self.add(
             self.url(action="kids_ages"),
             self.tr(30133),
-            art=art,
+            art=_kids_art("ages"),
             info={"mediatype": "tvshow", "plot": self.tr(30142)},
         )
         self.add(
             self.url(action="kids_shelves"),
             self.tr(30138),
-            art=art,
+            art=_kids_art("highlights"),
             info={"mediatype": "tvshow", "plot": self.tr(30147)},
         )
-        self.finish("tvshows", self.tr(30130), fanart=KIDS_FANART)
+        self.finish("tvshows", self.tr(30130), fanart=_kids_file("fanart.png"))
 
     def action_kids_ages(self):
-        art = _kids_art()
         bands = (
-            (30134, 30143, "", "CE_IN"),
-            (30135, 30144, "PUC_S3", "CE_TP"),
-            (30136, 30145, "PUC_S3", "CE_07"),
-            (30137, 30146, "PUC_S3", "CE_10"),
+            (30134, 30143, "", "CE_IN", "petits"),
+            (30135, 30144, "PUC_S3", "CE_TP", "tots"),
+            (30136, 30145, "PUC_S3", "CE_07", "age7"),
+            (30137, 30146, "PUC_S3", "CE_10", "age10"),
         )
-        for title_id, plot_id, canal, code in bands:
-            self._add_kids_folder(self.tr(title_id), self.tr(plot_id), canal=canal, codi_etic=code, art=art)
-        self.finish("tvshows", self.tr(30133), fanart=KIDS_FANART)
+        for title_id, plot_id, canal, code, kind in bands:
+            self._add_kids_folder(
+                self.tr(title_id), self.tr(plot_id), canal=canal, codi_etic=code, kind=kind
+            )
+        self.finish("tvshows", self.tr(30133), fanart=_kids_file("fanart.png"))
 
     def action_kids_shelves(self):
         rows = self.client.section_rows("sx3")
         if not rows:
             self.notify(self.tr(30112))
-        self._add_shelves(rows, self.tr(30138), fanart=KIDS_FANART)
+        self._add_shelves(rows, self.tr(30138), fanart=_kids_file("fanart.png"), kids=True)
 
-    def _add_kids_folder(self, title, plot, canal="", codi_etic="", art=None):
+    def _add_kids_folder(self, title, plot, canal="", codi_etic="", kind="home"):
         self.add(
             self.url(
                 action="programs",
@@ -235,7 +237,7 @@ class Router:
                 kids="1",
             ),
             title,
-            art=art or _kids_art(),
+            art=_kids_art(kind),
             info={"mediatype": "tvshow", "plot": plot},
         )
 
@@ -335,7 +337,7 @@ class Router:
         self._add_next(pagination, **extra)
         if not self._items:
             self.notify(self.tr(30112))
-        fanart = KIDS_FANART if self.params.get("kids") == "1" else None
+        fanart = _kids_file("fanart.png") if self.params.get("kids") == "1" else None
         self.finish("tvshows", title, fanart=fanart)
 
     def action_shelf(self):
@@ -345,10 +347,11 @@ class Router:
         items, pagination = self.client.listing(url, page=page)
         content = self._content_for(items)
         self._add_catalog(items, content)
-        self._add_next(pagination, action="shelf", url=url, title=title)
+        self._add_next(pagination, action="shelf", url=url, title=title, kids=self.params.get("kids"))
         if not self._items:
             self.notify(self.tr(30112))
-        self.finish(content, title)
+        background = _kids_file("fanart.png") if self.params.get("kids") == "1" else None
+        self.finish(content, title, fanart=background)
 
     def action_program(self):
         program_id = self.params.get("program_id")
@@ -364,7 +367,7 @@ class Router:
             return
         if not seasons:
             self.notify(self.tr(30113))
-            self.finish("seasons", title, fanart=art.get("fanart"))
+            self.finish("seasons", title, fanart=self._section_fanart(art.get("fanart")))
             return
         for season in seasons:
             number = season.get("number")
@@ -379,6 +382,7 @@ class Router:
                     season=season["id"],
                     season_number=number or "",
                     title=title,
+                    kids=self.params.get("kids"),
                 ),
                 label,
                 art=art,
@@ -392,7 +396,7 @@ class Router:
                     "year": shown["year"],
                 },
             )
-        self.finish("seasons", title, fanart=art.get("fanart"))
+        self.finish("seasons", title, fanart=self._section_fanart(art.get("fanart")))
 
     def action_episodes(self):
         page = _page(self.params)
@@ -450,10 +454,11 @@ class Router:
             season=season_id,
             season_number=season_number or "",
             title=show_title,
+            kids=self.params.get("kids"),
         )
         if not self._items:
             self.notify(self.tr(30112))
-        self.finish("episodes", show_title, fanart=show_art.get("fanart"))
+        self.finish("episodes", show_title, fanart=self._section_fanart(show_art.get("fanart")))
 
     def action_search(self):
         query = self.params.get("q") or ""
@@ -541,12 +546,17 @@ class Router:
             item.setArt({"thumb": stream["image"], "fanart": stream["image"]})
         xbmcplugin.setResolvedUrl(self.handle, True, item)
 
-    def _add_shelves(self, rows, title, fanart=None):
+    def _section_fanart(self, fallback):
+        if self.params.get("kids") == "1":
+            return _kids_file("fanart.png")
+        return fallback
+
+    def _add_shelves(self, rows, title, fanart=None, kids=False):
         for row in rows:
             name = row.get("nom") or title
             name = name.replace("*", "").strip() or title
             tipus = str(row.get("tipus") or "").upper()
-            art = {"fanart": fanart} if fanart else None
+            art = _kids_art("highlights") if kids else ({"fanart": fanart} if fanart else None)
             if tipus == "DIRECTES":
                 target = self.url(action="live")
             elif tipus == "FAST_CHANNEL":
@@ -554,9 +564,14 @@ class Router:
             elif tipus == "TEMATIQUES":
                 target = self.url(action="categories")
             else:
-                target = self.url(action="shelf", url=row.get("url_dades"), title=name)
-            self.add(target, name, art=art, info={"plot": name})
-        self.finish("videos", title, fanart=fanart)
+                target = self.url(
+                    action="shelf",
+                    url=row.get("url_dades"),
+                    title=name,
+                    kids="1" if kids else None,
+                )
+            self.add(target, name, art=art, info={"plot": name, "mediatype": "tvshow"})
+        self.finish("tvshows" if kids else "videos", title, fanart=fanart)
 
     def _add_catalog(self, items, content):
         for raw in items:
@@ -565,7 +580,12 @@ class Router:
                 continue
             if shown["kind"] == "program":
                 self.add(
-                    self.url(action="program", program_id=shown["id"], title=shown["title"]),
+                    self.url(
+                        action="program",
+                        program_id=shown["id"],
+                        title=shown["title"],
+                        kids=self.params.get("kids"),
+                    ),
                     shown["title"],
                     art=shown["art"],
                     info={
@@ -637,13 +657,24 @@ class Router:
         return "videos"
 
 
-def _kids_art():
+def _kids_file(name):
+    root = xbmcvfs.translatePath(xbmcaddon.Addon(ADDON_ID).getAddonInfo("path"))
+    return os.path.join(root, "resources", "media", "kids", name)
+
+
+def _kids_art(kind):
+    """Poster-friendly art for one Infantil folder. Shared colourful background."""
+    icon = _kids_file("icon-%s.png" % kind)
+    poster = _kids_file("poster-%s.png" % kind)
+    background = _kids_file("fanart.png")
     return {
-        "thumb": KIDS_ICON,
-        "poster": KIDS_ICON,
-        "icon": KIDS_ICON,
-        "fanart": KIDS_FANART,
-        "landscape": KIDS_FANART,
+        "icon": icon,
+        "thumb": icon,
+        "poster": poster,
+        "fanart": background,
+        "landscape": background,
+        "banner": _kids_file("banner.png"),
+        "clearlogo": SX3_CLEARLOGO,
     }
 
 

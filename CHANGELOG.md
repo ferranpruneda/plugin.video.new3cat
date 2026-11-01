@@ -5,7 +5,7 @@ El format segueix [Keep a Changelog](https://keepachangelog.com/). Les versions 
 ## [1.0.2] - 2026-11-01
 
 - Nova secció **Infantil**: SX3 en directe, programes del canal SX3, franges per edat (codi Infantil, tots els públics, a partir de 7 i de 10 anys) i destacats del web del SX3.
-- La secció té el logotip i el fanart del SX3, i les llistes de programes s'obren com a sèries perquè les pells puguin usar vistes de pòster.
+- La secció té dibuixos originals i acolorits (icona, pòster, fanart, bàner i paisatge) pensats per a criatures. El logotip oficial del SX3 només es mostra com a marca petita. Les llistes s'obren com a sèries perquè les pells puguin usar vistes de pòster.
 - No s'hi barregen tots els programes «+7» del catàleg general: aquest codi és una edat mínima, no una marca infantil. Les franges de 7 i 10 anys es limiten al canal SX3.
 
 ## [1.0.1] - 2026-11-01
