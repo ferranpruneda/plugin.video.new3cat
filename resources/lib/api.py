@@ -572,6 +572,10 @@ class Client:
         stream["plot"] = clean_text(info.get("descripcio"))
         stream["image"] = images.get("url") if isinstance(images, dict) else None
         stream["duration"] = parse_duration((info.get("durada") or {}))
+        stream["program_id"] = info.get("programa_id") or ""
+        stream["show"] = clean_text(info.get("programa"))
+        theme = info.get("tematica") if isinstance(info.get("tematica"), dict) else {}
+        stream["tematica"] = theme.get("id") or ""
         return {"ok": True, "reason": None, "stream": stream}
 
 

@@ -15,6 +15,8 @@ import xbmcvfs
 
 from resources.lib.api import ApiError, Client
 from resources.lib.cache import FileCache
+from resources.lib.history import HistoryStore, format_position, should_resume
+from resources.lib.matching import rank_matches, search_variants
 from resources.lib.parsing import present_item
 from resources.lib.strings import text as catalog_text
 
@@ -79,12 +81,14 @@ def ui_text(addon, string_id):
 
 
 class Router:
-    def __init__(self, handle, base, params, addon, client):
+    def __init__(self, handle, base, params, addon, client, profile):
         self.handle = handle
         self.base = base
         self.params = params
         self.addon = addon
         self.client = client
+        self.profile = profile
+        self.history = HistoryStore(profile)
         self._items = []
 
     def tr(self, string_id):
@@ -168,7 +172,9 @@ class Router:
             ("rankings", 30101, "https://apptv.3cat.cat/apptv/_resources/imatges/tematiques/superdestacat/pelicules_960x540.jpg"),
             ("categories", 30103, "https://apptv.3cat.cat/apptv/_resources/imatges/tematiques/superdestacat/documentals_960x540.jpg"),
             ("letters", 30104, "https://statics.3cat.cat/recursos/3play/img/series_960x540.jpg"),
+            ("continue", 30152, FANART),
             ("search", 30105, FANART),
+            ("voice", 30150, FANART),
         )
         for action, label, image in entries:
             art = {"thumb": image, "poster": image, "fanart": image, "icon": image}
@@ -427,7 +433,7 @@ class Router:
             art = dict(show_art)
             art.update(shown["art"])
             self.add(
-                self.url(action="play", video_id=shown["id"], title=title),
+                self._play_url(shown["id"], title, art, program_id=program_id, show=show_title, raw=raw),
                 title,
                 art=art,
                 info={
@@ -497,6 +503,130 @@ class Router:
             self.notify(self.tr(30112))
         self.finish(content, "%s: %s" % (title, query))
 
+    def action_voice(self):
+        query = (self.params.get("q") or "").strip()
+        if not query:
+            typed = xbmcgui.Dialog().input(self.tr(30151), type=xbmcgui.INPUT_ALPHANUM)
+            query = (typed or "").strip()
+        if not query:
+            xbmcplugin.endOfDirectory(self.handle, succeeded=False)
+            return
+        found = []
+        seen = set()
+        for variant in search_variants(query):
+            for kind in ("program", "video"):
+                try:
+                    batch, _page = self.client.search(variant, kind=kind, page=1, page_size=self.page_size())
+                except ApiError:
+                    if found:
+                        break
+                    raise
+                for item in batch:
+                    identity = item.get("id")
+                    if identity in seen:
+                        continue
+                    seen.add(identity)
+                    found.append(item)
+            if len(found) >= 12:
+                break
+        found = rank_matches(query, found)
+        self._add_catalog(found, self._content_for(found))
+        if not self._items:
+            self.notify(self.tr(30112))
+        self.finish(self._content_for(found) if self._items else "videos", "%s: %s" % (self.tr(30150), query))
+
+    def action_continue(self):
+        items = self.history.recent(self.page_size()) if self._remember() else []
+        if not items:
+            self.notify(self.tr(30154) if self._remember() else self.tr(30157))
+        for entry in items:
+            title = entry.get("title") or entry.get("show") or "3Cat"
+            show = entry.get("show") or ""
+            label = title if not show or show == title else "%s — %s" % (show, title)
+            art = {}
+            if entry.get("thumb"):
+                art["thumb"] = entry["thumb"]
+                art["poster"] = entry["thumb"]
+            if entry.get("fanart"):
+                art["fanart"] = entry["fanart"]
+                art["landscape"] = entry["fanart"]
+            label2 = ""
+            if should_resume(entry):
+                label2 = self.tr(30156) % format_position(entry.get("position"))
+            item_url = self.url(
+                action="play",
+                video_id=entry.get("video_id"),
+                title=title,
+                program_id=entry.get("program_id"),
+                show=show,
+                tematica=entry.get("tematica"),
+                thumb=entry.get("thumb"),
+                fanart=entry.get("fanart"),
+            )
+            self.add(
+                item_url,
+                label,
+                art=art,
+                info={
+                    "mediatype": "episode",
+                    "title": label,
+                    "tvshowtitle": show,
+                    "plot": entry.get("plot") or label2,
+                    "duration": entry.get("duration"),
+                    "resume": entry.get("position") if should_resume(entry) else None,
+                },
+                folder=False,
+                playable=True,
+                label2=label2,
+            )
+        if items:
+            self.add(
+                self.url(action="similar"),
+                self.tr(30153),
+                info={"mediatype": "tvshow", "plot": self.tr(30153)},
+            )
+        self.finish("episodes", self.tr(30152), cache=False)
+
+    def action_similar(self):
+        collected = []
+        seen = set(self.history.program_ids(20))
+        codes = []
+        for program_id in self.history.program_ids(3):
+            try:
+                detail = self.client.program(program_id)
+            except ApiError:
+                continue
+            for theme in detail.get("tematiques") or []:
+                code = theme.get("id") if isinstance(theme, dict) else None
+                if code and code not in codes:
+                    codes.append(code)
+        for code in codes[:2]:
+            batch, _page = self.client.programs(page=1, page_size=15, tematica=code)
+            for item in batch:
+                identity = item.get("id")
+                if identity in seen:
+                    continue
+                seen.add(identity)
+                collected.append(item)
+        if not collected:
+            recent = self.history.recent(1)
+            hint = ""
+            if recent:
+                hint = recent[0].get("show") or recent[0].get("title") or ""
+            if hint:
+                batch, _page = self.client.search(hint, kind="program", page=1, page_size=12)
+                for item in batch:
+                    if item.get("id") not in seen:
+                        collected.append(item)
+        self._add_catalog(collected, "tvshows")
+        if not self._items:
+            self.notify(self.tr(30112))
+        self.finish("tvshows", self.tr(30153))
+
+    def action_clear_history(self):
+        self.history.clear()
+        self.notify(self.tr(30155))
+
     def action_play(self):
         result = self.client.resolve(
             video_id=self.params.get("video_id"),
@@ -544,7 +674,50 @@ class Router:
             item.setSubtitles(subtitles)
         if stream.get("image"):
             item.setArt({"thumb": stream["image"], "fanart": stream["image"]})
+        self._note_playback(stream, media_url)
         xbmcplugin.setResolvedUrl(self.handle, True, item)
+
+    def _play_url(self, video_id, title, art, program_id="", show="", raw=None):
+        raw = raw or {}
+        theme = self.params.get("tematica") or _first_id(raw.get("tematiques"))
+        program = program_id or _first_id(raw.get("programes_tv"))
+        return self.url(
+            action="play",
+            video_id=video_id,
+            title=title,
+            program_id=program,
+            show=show or raw.get("programa") or "",
+            tematica=theme,
+            thumb=(art or {}).get("thumb") or (art or {}).get("poster") or "",
+            fanart=(art or {}).get("fanart") or "",
+            kids=self.params.get("kids"),
+        )
+
+    def _remember(self):
+        return _bool_setting(self.addon, "remember_history", True)
+
+    def _note_playback(self, stream, media_url):
+        if self.params.get("channel_id") or not self.params.get("video_id") or not self._remember():
+            return
+        record = {
+            "video_id": self.params.get("video_id"),
+            "program_id": self.params.get("program_id") or stream.get("program_id") or "",
+            "title": self.params.get("title") or stream.get("title") or "",
+            "show": self.params.get("show") or stream.get("show") or "",
+            "plot": stream.get("plot") or "",
+            "thumb": self.params.get("thumb") or stream.get("image") or "",
+            "fanart": self.params.get("fanart") or stream.get("image") or "",
+            "tematica": self.params.get("tematica") or stream.get("tematica") or "",
+            "position": 0,
+            "duration": stream.get("duration") or 0,
+            "stream_url": media_url,
+        }
+        previous = self.history.get(record["video_id"])
+        if previous and should_resume(previous):
+            record["position"] = previous.get("position") or 0
+            record["duration"] = previous.get("duration") or record["duration"]
+        self.history.remember(record)
+        self.history.write_pending(record)
 
     def _section_fanart(self, fallback):
         if self.params.get("kids") == "1":
@@ -585,6 +758,7 @@ class Router:
                         program_id=shown["id"],
                         title=shown["title"],
                         kids=self.params.get("kids"),
+                        tematica=_first_id(raw.get("tematiques")),
                     ),
                     shown["title"],
                     art=shown["art"],
@@ -620,7 +794,7 @@ class Router:
                 info["season"] = shown["season"]
                 info["episode"] = shown["episode"]
             self.add(
-                self.url(action="play", video_id=shown["id"], title=title),
+                self._play_url(shown["id"], title, shown["art"], show=shown.get("show"), raw=raw),
                 title,
                 art=shown["art"],
                 info=info,
@@ -655,6 +829,13 @@ class Router:
         if all(item["kind"] == "video" and item["episode"] for item in shown):
             return "episodes"
         return "videos"
+
+
+def _first_id(entries):
+    for entry in entries or []:
+        if isinstance(entry, dict) and entry.get("id"):
+            return entry.get("id")
+    return ""
 
 
 def _kids_file(name):
@@ -711,6 +892,12 @@ def _apply_info(item, info):
         tag.setMpaa(info["mpaa"])
     if info.get("genre"):
         tag.setGenres(list(info["genre"]))
+    if info.get("resume") and info.get("duration"):
+        try:
+            tag.setResumePoint(float(info["resume"]), float(info["duration"]))
+        except Exception:
+            item.setProperty("ResumeTime", str(int(float(info["resume"]))))
+            item.setProperty("TotalTime", str(int(float(info["duration"]))))
     tag.setStudios(["3Cat"])
 
 
@@ -734,7 +921,7 @@ def run(argv=None):
     client = Client(cache=FileCache(profile), ttl=_int_setting(addon, "cache_minutes", 30, 1, 240) * 60)
     base = argv[0]
     try:
-        Router(handle, base, params, addon, client).dispatch()
+        Router(handle, base, params, addon, client, profile).dispatch()
     except Exception:
         log(traceback.format_exc(), xbmc.LOGERROR)
         xbmcgui.Dialog().notification(addon.getAddonInfo("name"), ui_text(addon, 30116), xbmcgui.NOTIFICATION_ERROR, 6000)

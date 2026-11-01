@@ -152,3 +152,11 @@ msgstr "Directe"
 msgctxt "#30125"
 msgid "Season"
 msgstr "Temporada"
+
+msgctxt "#32020"
+msgid "Save what I watch on this device"
+msgstr "Desa el que miro en aquest dispositiu"
+
+msgctxt "#32021"
+msgid "Clear watch history on this device"
+msgstr "Esborra l'historial d'aquest dispositiu"

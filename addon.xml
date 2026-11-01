@@ -7,6 +7,7 @@
   <extension point="xbmc.python.pluginsource" library="addon.py">
     <provides>video</provides>
   </extension>
+  <extension point="xbmc.service" library="service.py" start="startup"/>
   <extension point="xbmc.addon.metadata">
     <summary lang="ca_ES">Televisió en directe i a la carta de 3Cat</summary>
     <summary lang="es_ES">Televisión en directo y a la carta de 3Cat</summary>
@@ -14,9 +15,9 @@
     <description lang="ca_ES">Complement no oficial per veure els directes (TV3, 3CatInfo, SX3, 33, Esport3, TV3CAT i canals temàtics) i el catàleg a la carta de 3Cat, l'antiga CCMA. Inclou categories, cerca, novetats i el més vist, amb pòsters i sinopsi. Alguns continguts només es poden veure des de Catalunya o Espanya. No esquiva el DRM: si un vídeo està protegit, s'avisa i no es reprodueix. Cal Kodi 20 o 21. inputstream.adaptive és recomanat per a HLS i DASH.</description>
     <description lang="es_ES">Complemento no oficial para ver los directos (TV3, 3CatInfo, SX3, 33, Esport3, TV3CAT y canales temáticos) y el catálogo a la carta de 3Cat, la antigua CCMA. Incluye categorías, búsqueda, novedades y lo más visto, con pósters y sinopsis. Parte del contenido solo se puede ver desde Cataluña o España. No elude el DRM. Requiere Kodi 20 o 21. inputstream.adaptive es recomendable para HLS y DASH.</description>
     <description lang="en_GB">Unofficial addon for 3Cat live channels (TV3, 3CatInfo, SX3, 33, Esport3, TV3CAT and thematic channels) and the on-demand catalog. Includes categories, search, latest videos and most-watched rows, with posters and plot. Some programmes are only available in Catalonia or Spain. DRM is not bypassed. Requires Kodi 20 or 21. inputstream.adaptive is recommended for HLS and DASH.</description>
-    <news lang="ca_ES">1.0.2: secció Infantil amb dibuixos acolorits, SX3 en directe i franges per edat. 1.0.1: menús en català per defecte.</news>
-    <news lang="es_ES">1.0.2: sección Infantil con dibujos de colores, SX3 en directo y franjas por edad. 1.0.1: menús en catalán por defecto.</news>
-    <news lang="en_GB">1.0.2: colourful Kids section, SX3 live and age bands. 1.0.1: menus default to Catalan.</news>
+    <news lang="ca_ES">1.0.2: Infantil amb dibuixos acolorits, cerca per veu i Continua mirant (només en aquest aparell). 1.0.1: menús en català per defecte.</news>
+    <news lang="es_ES">1.0.2: Infantil con dibujos de colores, búsqueda por voz y Seguir viendo (solo en este aparato). 1.0.1: menús en catalán por defecto.</news>
+    <news lang="en_GB">1.0.2: colourful Kids section, voice search and continue watching stored only on this device. 1.0.1: menus default to Catalan.</news>
     <disclaimer lang="ca_ES">Aquest complement no està afiliat a la CCMA ni a 3Cat. Els drets dels continguts pertanyen als seus propietaris. La disponibilitat depèn de la geolocalització i de les condicions de 3Cat.</disclaimer>
     <disclaimer lang="es_ES">Este complemento no está afiliado a la CCMA ni a 3Cat. La disponibilidad depende de la geolocalización y de las condiciones de 3Cat.</disclaimer>
     <disclaimer lang="en_GB">This addon is not affiliated with CCMA or 3Cat. Availability depends on geolocation and on 3Cat's terms.</disclaimer>
