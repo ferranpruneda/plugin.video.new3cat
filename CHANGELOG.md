@@ -2,6 +2,14 @@
 
 El format segueix [Keep a Changelog](https://keepachangelog.com/). Les versions del complement són les de `addon.xml`. Una etiqueta `vX.Y.Z` al repositori publica el zip d'aquella versió a GitHub Releases.
 
+## [1.0.3] - 2026-11-01
+
+- Els menús i les pàgines de carpetes s'obren en mur amb informació (vista 54 d'Estuary, la mateixa a Kodi 20 i 21): menú principal, Infantil, Per edats, categories, lletres A-Z, l'índex d'El més vist i les files d'una secció. Aquestes llistes es marquen com a sèries (`tvshows`). Al mur amb informació d'Estuary 20 i 21, `videos` dibuixa el pòster dins una fitxa apaïsada de 316×218; `tvshows` el mostra a 290×415, sense encaixar un pòster vertical en aquella fitxa.
+- Cada entrada d'aquestes pàgines té títol i descripció. Si 3Cat no en dóna, n'hi ha una d'escrita en català, amb traducció al castellà i a l'anglès.
+- Directes, capítols, clips, novetats, cerca de vídeos i Continua mirant s'obren en llista ampla (vista 55).
+- Les llistes de programes i les temporades es queden en mur (vista 500). El pòster es pot tornar a triar per a sèries, pel·lícules i temporades.
+- L'opció única de vista se substitueix per tres (menús i categories, vídeos i directes, programes), i es manté la de forçar la vista. Qui havia canviat la vista global ho ha de tornar a triar. En altres pells no es força cap número.
+
 ## [1.0.2] - 2026-11-01
 
 - Nova secció **Infantil**: SX3 en directe, programes del canal SX3, franges per edat (codi Infantil, tots els públics, a partir de 7 i de 10 anys) i destacats del web del SX3.

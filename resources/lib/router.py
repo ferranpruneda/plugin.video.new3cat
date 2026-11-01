@@ -17,9 +17,23 @@ from resources.lib.api import ApiError, Client
 from resources.lib.cache import FileCache
 from resources.lib.history import HistoryStore, format_position, should_resume
 from resources.lib.matching import rank_matches, search_variants
-from resources.lib.parsing import present_item
-from resources.lib.strings import text as catalog_text
-from resources.lib.views import estuary_view_id, fill_art
+from resources.lib.parsing import plot_of, present_item
+from resources.lib.strings import (
+    ROOT_MENU_PLOTS,
+    category_plot,
+    folder_plot,
+    letter_plot,
+    search_plot,
+    text as catalog_text,
+)
+from resources.lib.views import (
+    SECTION_SETTING,
+    directory_content,
+    estuary_view_id,
+    fill_art,
+    listing_section,
+    section_view,
+)
 
 ADDON_ID = "plugin.video.new3cat"
 FANART = "https://img.3cat.cat/multimedia/png/3/0/1697462431903_1920x1080.png"
@@ -44,8 +58,13 @@ def build_url(base, params):
     return "%s?%s" % (base, urlencode(cleaned))
 
 
-def _view_type(addon):
-    return {"0": "wall", "1": "poster", "2": "infowall"}.get(addon.getSetting("view_type") or "0", "wall")
+def _section_view_name(addon, section):
+    key = SECTION_SETTING.get(section) or SECTION_SETTING["programme"]
+    try:
+        raw = addon.getSetting(key)
+    except Exception:
+        raw = ""
+    return section_view(section if section in SECTION_SETTING else "programme", raw)
 
 
 def _bool_setting(addon, key, default):
@@ -142,7 +161,8 @@ class Router:
             item.setProperty("IsPlayable", "true")
         self._items.append((url, item, folder))
 
-    def finish(self, content, category, cache=True, fanart=None):
+    def finish(self, content, category, cache=True, fanart=None, section="programme"):
+        content = directory_content(section, content)
         xbmcplugin.setPluginCategory(self.handle, category)
         xbmcplugin.setPluginFanart(self.handle, fanart or FANART)
         if content:
@@ -163,13 +183,19 @@ class Router:
         xbmcplugin.addDirectoryItems(self.handle, self._items)
         xbmcplugin.endOfDirectory(self.handle, succeeded=True, cacheToDisc=cache)
         self._items = []
-        self._apply_default_view(content or "")
+        self._apply_default_view(content or "", section)
 
-    def _apply_default_view(self, content):
+    def _follows_kodi(self):
+        try:
+            return (self.addon.getSetting("ui_language") or "0") == "1"
+        except Exception:
+            return False
+
+    def _apply_default_view(self, content, section):
         view_id = estuary_view_id(
             xbmc.getSkinDir(),
             _bool_setting(self.addon, "force_view", True),
-            _view_type(self.addon),
+            _section_view_name(self.addon, section),
             content,
         )
         if not view_id:
@@ -196,7 +222,12 @@ class Router:
         )
         for action, label, image in entries:
             art = {"thumb": image, "poster": image, "fanart": image, "icon": image}
-            self.add(self.url(action=action), self.tr(label), art=art, info={"mediatype": "video", "plot": self.tr(label)})
+            self.add(
+                self.url(action=action),
+                self.tr(label),
+                art=art,
+                info={"mediatype": "video", "plot": self.tr(ROOT_MENU_PLOTS[action])},
+            )
         self.add(
             self.url(action="kids"),
             self.tr(30130),
@@ -205,8 +236,13 @@ class Router:
         )
         for action, label, image in rest:
             art = {"thumb": image, "poster": image, "fanart": image, "icon": image}
-            self.add(self.url(action=action), self.tr(label), art=art, info={"mediatype": "video", "plot": self.tr(label)})
-        self.finish("videos", name, cache=False)
+            self.add(
+                self.url(action=action),
+                self.tr(label),
+                art=art,
+                info={"mediatype": "video", "plot": self.tr(ROOT_MENU_PLOTS[action])},
+            )
+        self.finish("tvshows", name, cache=False, section="menu")
 
     def action_kids(self):
         self.add(
@@ -230,7 +266,7 @@ class Router:
             art=_kids_art("highlights"),
             info={"mediatype": "tvshow", "plot": self.tr(30147)},
         )
-        self.finish("tvshows", self.tr(30130), fanart=_kids_file("fanart.png"))
+        self.finish("tvshows", self.tr(30130), fanart=_kids_file("fanart.png"), section="menu")
 
     def action_kids_ages(self):
         bands = (
@@ -243,7 +279,7 @@ class Router:
             self._add_kids_folder(
                 self.tr(title_id), self.tr(plot_id), canal=canal, codi_etic=code, kind=kind
             )
-        self.finish("tvshows", self.tr(30133), fanart=_kids_file("fanart.png"))
+        self.finish("tvshows", self.tr(30133), fanart=_kids_file("fanart.png"), section="menu")
 
     def action_kids_shelves(self):
         rows = self.client.section_rows("sx3")
@@ -274,14 +310,14 @@ class Router:
                 art=channel.get("art"),
                 info={
                     "mediatype": "video",
-                    "plot": channel.get("plot") or "",
+                    "plot": channel.get("plot") or self.tr(30179),
                     "duration": channel.get("duration"),
                     "genre": [self.tr(30124)],
                 },
                 folder=False,
                 playable=True,
             )
-        self.finish("videos", self.tr(30100), cache=False)
+        self.finish("videos", self.tr(30100), cache=False, section="video")
 
     def action_latest(self):
         page = _page(self.params)
@@ -290,7 +326,7 @@ class Router:
         self._add_next(pagination, action="latest")
         if not self._items:
             self.notify(self.tr(30112))
-        self.finish(self._content_for(items), self.tr(30102))
+        self.finish(self._content_for(items), self.tr(30102), section="video")
 
     def action_rankings(self):
         self._add_shelves(self.client.ranking_rows(), self.tr(30101))
@@ -301,11 +337,20 @@ class Router:
                 self.url(action="category", slug=category["slug"], title=category["title"]),
                 category["title"],
                 art=category.get("art"),
-                info={"mediatype": "tvshow", "plot": category.get("plot") or ""},
+                info={
+                    "mediatype": "tvshow",
+                    "plot": category_plot(
+                        category["slug"],
+                        category.get("plot") or "",
+                        category["title"],
+                        follow_kodi=self._follows_kodi(),
+                        kodi_language=_kodi_language(),
+                    ),
+                },
             )
         if not self._items:
             self.notify(self.tr(30123))
-        self.finish("tvshows", self.tr(30103))
+        self.finish("tvshows", self.tr(30103), section="menu")
 
     def action_category(self):
         slug = self.params.get("slug") or ""
@@ -326,16 +371,28 @@ class Router:
             return
         if not rows:
             self.notify(self.tr(30123))
-            self.finish("videos", title)
+            self.finish("tvshows", title, section="menu")
             return
         self._add_shelves(rows, title, fanart=fanart)
 
     def action_letters(self):
-        self.add(self.url(action="programs", title=self.tr(30118)), self.tr(30118))
-        self.add(self.url(action="programs", lletra="#", title="#"), "#")
+        self.add(
+            self.url(action="programs", title=self.tr(30118)),
+            self.tr(30118),
+            info={"mediatype": "video", "plot": self.tr(30168)},
+        )
+        self.add(
+            self.url(action="programs", lletra="#", title="#"),
+            "#",
+            info={"mediatype": "video", "plot": letter_plot("#", self.tr)},
+        )
         for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-            self.add(self.url(action="programs", lletra=letter, title=letter), letter)
-        self.finish("videos", self.tr(30104))
+            self.add(
+                self.url(action="programs", lletra=letter, title=letter),
+                letter,
+                info={"mediatype": "video", "plot": letter_plot(letter, self.tr)},
+            )
+        self.finish("tvshows", self.tr(30104), section="menu")
 
     def action_programs(self):
         page = _page(self.params)
@@ -362,7 +419,7 @@ class Router:
         if not self._items:
             self.notify(self.tr(30112))
         fanart = _kids_file("fanart.png") if self.params.get("kids") == "1" else None
-        self.finish("tvshows", title, fanart=fanart)
+        self.finish("tvshows", title, fanart=fanart, section="programme")
 
     def action_shelf(self):
         page = _page(self.params)
@@ -375,7 +432,7 @@ class Router:
         if not self._items:
             self.notify(self.tr(30112))
         background = _kids_file("fanart.png") if self.params.get("kids") == "1" else None
-        self.finish(content, title, fanart=background)
+        self.finish(content, title, fanart=background, section=listing_section(content))
 
     def action_program(self):
         program_id = self.params.get("program_id")
@@ -391,7 +448,7 @@ class Router:
             return
         if not seasons:
             self.notify(self.tr(30113))
-            self.finish("seasons", title, fanart=self._section_fanart(art.get("fanart")))
+            self.finish("seasons", title, fanart=self._section_fanart(art.get("fanart")), section="programme")
             return
         for season in seasons:
             number = season.get("number")
@@ -420,7 +477,7 @@ class Router:
                     "year": shown["year"],
                 },
             )
-        self.finish("seasons", title, fanart=self._section_fanart(art.get("fanart")))
+        self.finish("seasons", title, fanart=self._section_fanart(art.get("fanart")), section="programme")
 
     def action_episodes(self):
         page = _page(self.params)
@@ -482,7 +539,7 @@ class Router:
         )
         if not self._items:
             self.notify(self.tr(30112))
-        self.finish("episodes", show_title, fanart=self._section_fanart(show_art.get("fanart")))
+        self.finish("episodes", show_title, fanart=self._section_fanart(show_art.get("fanart")), section="video")
 
     def action_search(self):
         query = self.params.get("q") or ""
@@ -502,14 +559,14 @@ class Router:
             self.add(
                 self.url(action="search", q=query, kind="program"),
                 self.tr(30119),
-                info={"plot": query},
+                info={"mediatype": "video", "plot": search_plot("program", query, self.tr)},
             )
             self.add(
                 self.url(action="search", q=query, kind="video"),
                 self.tr(30120),
-                info={"plot": query},
+                info={"mediatype": "video", "plot": search_plot("video", query, self.tr)},
             )
-            self.finish("videos", self.tr(30105))
+            self.finish("tvshows", self.tr(30105), section="menu")
             return
         page = _page(self.params)
         items, pagination = self.client.search(query, kind=kind, page=page, page_size=self.page_size())
@@ -519,7 +576,7 @@ class Router:
         title = self.tr(30119) if kind == "program" else self.tr(30120)
         if not self._items:
             self.notify(self.tr(30112))
-        self.finish(content, "%s: %s" % (title, query))
+        self.finish(content, "%s: %s" % (title, query), section="programme" if kind == "program" else "video")
 
     def action_voice(self):
         query = (self.params.get("q") or "").strip()
@@ -551,7 +608,8 @@ class Router:
         self._add_catalog(found, self._content_for(found))
         if not self._items:
             self.notify(self.tr(30112))
-        self.finish(self._content_for(found) if self._items else "videos", "%s: %s" % (self.tr(30150), query))
+        content = self._content_for(found) if self._items else "videos"
+        self.finish(content, "%s: %s" % (self.tr(30150), query), section=listing_section(content))
 
     def action_continue(self):
         items = self.history.recent(self.page_size()) if self._remember() else []
@@ -601,9 +659,9 @@ class Router:
             self.add(
                 self.url(action="similar"),
                 self.tr(30153),
-                info={"mediatype": "tvshow", "plot": self.tr(30153)},
+                info={"mediatype": "tvshow", "plot": self.tr(30178)},
             )
-        self.finish("episodes", self.tr(30152), cache=False)
+        self.finish("episodes", self.tr(30152), cache=False, section="video")
 
     def action_similar(self):
         collected = []
@@ -639,7 +697,7 @@ class Router:
         self._add_catalog(collected, "tvshows")
         if not self._items:
             self.notify(self.tr(30112))
-        self.finish("tvshows", self.tr(30153))
+        self.finish("tvshows", self.tr(30153), section="programme")
 
     def action_clear_history(self):
         self.history.clear()
@@ -761,8 +819,13 @@ class Router:
                     title=name,
                     kids="1" if kids else None,
                 )
-            self.add(target, name, art=art, info={"plot": name, "mediatype": "tvshow"})
-        self.finish("tvshows" if kids else "videos", title, fanart=fanart)
+            self.add(
+                target,
+                name,
+                art=art,
+                info={"plot": folder_plot(plot_of(row), name, tipus, self.tr), "mediatype": "tvshow"},
+            )
+        self.finish("tvshows", title, fanart=fanart, section="menu")
 
     def _add_catalog(self, items, content):
         for raw in items:

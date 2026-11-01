@@ -162,8 +162,8 @@ msgid "Clear watch history on this device"
 msgstr "Esborra l'historial d'aquest dispositiu"
 
 msgctxt "#32022"
-msgid "Use a poster or wall view"
-msgstr "Mostra un mur o pòsters"
+msgid "Force the Estuary view"
+msgstr "Força la vista d'Estuary"
 
 msgctxt "#32023"
 msgid "View type"
@@ -180,3 +180,159 @@ msgstr "Pòster"
 msgctxt "#32026"
 msgid "Info wall"
 msgstr "Mur amb informació"
+
+msgctxt "#32027"
+msgid "Wide list"
+msgstr "Llista ampla"
+
+msgctxt "#32028"
+msgid "Menus and categories"
+msgstr "Menús i categories"
+
+msgctxt "#32029"
+msgid "Videos and live channels"
+msgstr "Vídeos i directes"
+
+msgctxt "#32030"
+msgid "Programmes"
+msgstr "Programes"
+
+msgctxt "#30160"
+msgid "Television channels that are on the air right now."
+msgstr "Los canales de televisión que están emitiendo ahora."
+
+msgctxt "#30161"
+msgid "Rows of what people watch most: series, films, documentaries and more."
+msgstr "Las filas de lo más visto: series, películas, documentales y más."
+
+msgctxt "#30162"
+msgid "Videos just published on the website."
+msgstr "Los vídeos que se acaban de publicar en la web."
+
+msgctxt "#30163"
+msgid "The website sections, from series to sport and culture."
+msgstr "Las secciones de la web, de las series a los deportes y la cultura."
+
+msgctxt "#30164"
+msgid "Every programme, or only those under one letter."
+msgstr "Todos los programas, o solo los de una letra."
+
+msgctxt "#30165"
+msgid "Type a title and choose programmes or videos."
+msgstr "Escribe un título y elige si buscas programas o vídeos."
+
+msgctxt "#30166"
+msgid "Say a title with the keyboard or remote microphone."
+msgstr "Dicta un título con el micrófono del teclado o del mando."
+
+msgctxt "#30167"
+msgid "What you have started on this device, so you can pick it up again."
+msgstr "Lo que has empezado a ver en este aparato, para retomarlo."
+
+msgctxt "#30168"
+msgid "The whole catalogue, not filtered by the first letter."
+msgstr "El catálogo entero, sin filtrar por la letra inicial."
+
+msgctxt "#30169"
+msgid "Programmes whose title starts with a number or a symbol."
+msgstr "Programas cuyo título empieza por un número o un signo."
+
+msgctxt "#30170"
+msgid "Programmes whose title starts with %s."
+msgstr "Programas cuyo título empieza por %s."
+
+msgctxt "#30171"
+msgid "Programmes that match «%s»."
+msgstr "Programas que coinciden con «%s»."
+
+msgctxt "#30172"
+msgid "Videos and episodes that match «%s»."
+msgstr "Vídeos y capítulos que coinciden con «%s»."
+
+msgctxt "#30173"
+msgid "Programmes and videos in the «%s» section."
+msgstr "Programas y vídeos de la sección «%s»."
+
+msgctxt "#30174"
+msgid "Programmes gathered under «%s»."
+msgstr "Programas reunidos en «%s»."
+
+msgctxt "#30175"
+msgid "Live channels in this section."
+msgstr "Los canales en directo de esta sección."
+
+msgctxt "#30176"
+msgid "The categories under this section."
+msgstr "Las categorías de esta sección."
+
+msgctxt "#30177"
+msgid "Thematic channels that are broadcasting live."
+msgstr "Canales temáticos que emiten en directo."
+
+msgctxt "#30178"
+msgid "Other programmes in the same theme as the ones you have watched."
+msgstr "Otros programas de la misma temática que los que has visto."
+
+msgctxt "#30179"
+msgid "This channel's live broadcast."
+msgstr "Emisión en directo de este canal."
+
+msgctxt "#30180"
+msgid "News, interviews and what is happening now."
+msgstr "Informativos, entrevistas y lo que está pasando."
+
+msgctxt "#30181"
+msgid "Programmes for learning and for school."
+msgstr "Contenidos para aprender y para la escuela."
+
+msgctxt "#30182"
+msgid "Recipes, cooks and cooking shows."
+msgstr "Recetas, cocineros y programas de cocina."
+
+msgctxt "#30183"
+msgid "Culture, explainers and programmes about the world."
+msgstr "Cultura, divulgación y programas para entender el mundo."
+
+msgctxt "#30184"
+msgid "Documentaries and reports to watch in full."
+msgstr "Documentales y reportajes para ver enteros."
+
+msgctxt "#30185"
+msgid "Entertainment, comedy and variety shows."
+msgstr "Programas de entretenimiento, humor y variedades."
+
+msgctxt "#30186"
+msgid "Competitions, live sport and sports programmes."
+msgstr "Competiciones, retransmisiones y programas de deporte."
+
+msgctxt "#30187"
+msgid "Concerts, sessions and music programmes."
+msgstr "Conciertos, sesiones y programas de música."
+
+msgctxt "#30188"
+msgid "Films and TV movies in the catalogue."
+msgstr "Películas y telefilmes del catálogo."
+
+msgctxt "#30189"
+msgid "Fiction series, with their seasons and episodes."
+msgstr "Series de ficción, con las temporadas y los capítulos."
+
+msgctxt "#30190"
+msgid "Series and programmes from the SX3 children's channel."
+msgstr "Series y programas del canal infantil SX3."
+
+msgctxt "#30191"
+msgid "Videos gathered under «%s»."
+msgstr "Vídeos reunidos en «%s»."
+
+msgctxt "#30192"
+msgid "The chart «%s»."
+msgstr "La clasificación «%s»."
+
+msgctxt "#30193"
+msgid "The highlight «%s»."
+msgstr "El destacado «%s»."
+
+msgctxt "#30194"
+msgid "Items gathered under «%s»."
+msgstr "Contenidos reunidos en «%s»."

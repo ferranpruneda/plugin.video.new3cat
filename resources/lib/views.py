@@ -1,12 +1,20 @@
-"""Default poster and wall views for Kodi's Estuary skin.
+"""Default views for Kodi's Estuary skin, chosen per kind of page.
 
-Verified in skin.estuary MyVideoNav.xml on the Nexus (Kodi 20) and Omega
-(Kodi 21) branches: the window lists views 50, 51, 52, 53, 54, 55, 500, 501
-and 502. Wall is control 500 and Poster is control 51. InfoWall is 54.
+Verified on the Nexus (Kodi 20) and Omega (Kodi 21) branches of
+xbmc/xbmc, file addons/skin.estuary/xml/MyVideoNav.xml. Both list the
+same view ids:
 
-Wall and InfoWall are allowed for movies, tvshows, seasons, episodes and the
-generic "videos" type. Poster is only allowed for movies, sets, tvshows,
-seasons and games, so other lists fall back to the wall.
+    <views>50,51,52,53,54,55,500,501,502</views>
+
+and include View_54_InfoWall and View_55_WideList.
+
+InfoWall is control id 54 (View_54_InfoWall.xml, panel id="54"). Its
+items are visible for videos, tvshows, seasons, episodes and movies
+(also music, images and games). WideList is control id 55
+(View_55_WideList.xml, fixedlist id="55") and lays out tvshows,
+seasons, episodes, movies, videos and games. Wall is 500. Poster is
+51 and only for movies, sets, tvshows, seasons and games, so a poster
+choice on any other list falls back to the wall.
 """
 
 from __future__ import annotations
@@ -14,10 +22,72 @@ from __future__ import annotations
 ESTUARY_WALL = 500
 ESTUARY_POSTER = 51
 ESTUARY_INFOWALL = 54
+ESTUARY_WIDELIST = 55
 
 POSTER_CONTENT = frozenset({"movies", "sets", "tvshows", "seasons", "games"})
 
-VIEW_TYPES = ("wall", "poster", "infowall")
+# Same order as the settings lvalues: Mur, Pòster, Mur amb informació, Llista ampla.
+VIEW_CHOICES = ("wall", "poster", "infowall", "widelist")
+VIEW_TYPES = frozenset(VIEW_CHOICES)
+VIEW_IDS = {
+    "wall": ESTUARY_WALL,
+    "poster": ESTUARY_POSTER,
+    "infowall": ESTUARY_INFOWALL,
+    "widelist": ESTUARY_WIDELIST,
+}
+
+# addon setting id, and the enum index used when the user has not chosen one.
+SECTION_SETTING = {
+    "menu": "view_menus",
+    "video": "view_videos",
+    "programme": "view_programmes",
+}
+SECTION_DEFAULTS = {
+    "menu": "infowall",
+    "video": "widelist",
+    "programme": "wall",
+}
+SECTION_DEFAULT_INDEX = {
+    "menu": "2",
+    "video": "3",
+    "programme": "0",
+}
+
+
+def section_view(section, setting_value):
+    """View name for a page kind. An empty setting uses that kind's default."""
+    default_name = SECTION_DEFAULTS.get(section, "wall")
+    if setting_value is None or str(setting_value).strip() == "":
+        return default_name
+    return _choice_at(setting_value, default_name)
+
+
+def directory_content(section, content):
+    """Content type passed to the directory.
+
+    Estuary InfoWall (control 54) picks the tile from Container.Content.
+    On Kodi 21 Omega and Kodi 20 Nexus, View_54_InfoWall.xml is the same
+    shape: videos and episodes use InfoWallEpisodeLayout, a 316 by 218
+    landscape image that still prefers ListItem.Art(poster) through
+    InfoWallThumbVar. Tvshows, movies and seasons use InfoWallMovieLayout,
+    which draws that poster at 290 by 415 with aspectratio scale. Menu
+    pages therefore use tvshows so a 2:3 poster is not fitted into the
+    landscape slot. Video lists and programme lists keep their own type.
+    """
+    if section == "menu":
+        return "tvshows"
+    return content or ""
+
+
+def listing_section(content):
+    """Programme directories keep the programme view.
+
+    Episodes, films, clips and mixed results are video lists. A season
+    directory is not passed here: those pages use the programme view.
+    """
+    if content == "tvshows":
+        return "programme"
+    return "video"
 
 
 def estuary_view_id(skin_dir, force, view_type, content):
@@ -33,7 +103,17 @@ def estuary_view_id(skin_dir, force, view_type, content):
     choice = view_type if view_type in VIEW_TYPES else "wall"
     if choice == "poster" and content not in POSTER_CONTENT:
         return ESTUARY_WALL
-    return {"wall": ESTUARY_WALL, "poster": ESTUARY_POSTER, "infowall": ESTUARY_INFOWALL}[choice]
+    return VIEW_IDS[choice]
+
+
+def _choice_at(value, default_name):
+    try:
+        index = int(value)
+    except (TypeError, ValueError):
+        return default_name
+    if index < 0 or index >= len(VIEW_CHOICES):
+        return default_name
+    return VIEW_CHOICES[index]
 
 
 def fill_art(art, fallback=""):
